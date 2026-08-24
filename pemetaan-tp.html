@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pemetaan Tujuan Pembelajaran (TP) — PJJ Maluku Tengah</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --navy:#001D62; --navy-light:#EAEEF7; --orange:#F9A703; --orange-soft:#FFF3CD;
+    --gray-line:#D8DEE9; --text:#1C2333; --muted:#5B6577; --green:#1E7A34; --green-soft:#E7F5EA;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Calibri,"Segoe UI",Arial,sans-serif;background:#F5F7FB;color:var(--text);padding:32px 16px 100px;}
+  .wrap{max-width:960px;margin:0 auto;}
+  header.top{background:var(--navy);color:#fff;border-radius:14px;padding:26px 30px;margin-bottom:22px;box-shadow:0 6px 18px rgba(27,52,97,.25);}
+  header.top h1{margin:0 0 6px;font-size:22px;}
+  header.top p{margin:0;color:#C9D3E8;font-size:14px;}
+  .bar{height:4px;background:var(--orange);border-radius:2px;margin-top:16px;}
+  .card{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:22px 24px;margin-bottom:18px;}
+  .card h2{font-size:16px;color:var(--navy);margin:0 0 6px;padding-bottom:10px;border-bottom:3px solid var(--orange);}
+  .card .sub{font-size:12.5px;color:var(--muted);margin:0 0 14px;}
+  .note{background:var(--orange-soft);border-left:4px solid var(--orange);padding:8px 12px;font-size:12.5px;color:#6B5000;border-radius:4px;margin-bottom:14px;}
+  details.panduan-dropdown{margin-bottom:16px;border:1px solid var(--gray-line);border-radius:8px;padding:12px 16px;background:#FAFBFD;overflow:hidden;}
+  details.panduan-dropdown[open]{background:#fff;}
+  details.panduan-dropdown summary{outline:none;}
+  details.panduan-dropdown summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:13px;list-style:revert;}
+  details.panduan-dropdown summary:hover{color:var(--orange);}
+  details.panduan-dropdown summary::marker{color:var(--orange);}
+  .panduan-table-wrap{overflow-x:auto;margin-top:12px;}
+  .panduan-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .panduan-table th{background:var(--navy-light);color:var(--navy);padding:7px 10px;text-align:left;font-weight:700;border:1px solid var(--gray-line);}
+  .panduan-table td{border:1px solid var(--gray-line);padding:7px 10px;vertical-align:top;color:var(--text);}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  input[type=text], textarea, select{width:100%;font-family:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--gray-line);border-radius:7px;margin-bottom:12px;resize:vertical;color:var(--text);background:#fff;}
+  input[type=text]:focus, textarea:focus, select:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--navy-light);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+  .cp-block{border:1.5px solid var(--gray-line);border-radius:10px;padding:18px 18px 8px;margin-bottom:16px;background:#FCFDFF;}
+  .cp-block .cp-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;}
+  .cp-title span{font-weight:700;color:var(--navy);font-size:13.5px;flex-shrink:0;}
+  .removeBtn{background:#FDEAEA;color:#B02A2A;border:none;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;font-weight:600;flex-shrink:0;}
+  .removeBtn:hover{background:#F9D2D2;}
+  .tp-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;background:#FAFBFD;border:1px solid var(--gray-line);border-radius:8px;padding:10px;}
+  .tp-row .tp-label{font-weight:700;color:var(--navy);font-size:12.5px;flex-shrink:0;width:42px;padding-top:8px;}
+  .tp-row textarea{margin-bottom:0;flex:1;min-height:44px;}
+  .tp-row .removeBtn{flex-shrink:0;align-self:flex-start;margin-top:4px;}
+  .smallBtn{background:var(--navy-light);color:var(--navy);border:1px dashed var(--navy);border-radius:7px;padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:2px;margin-bottom:10px;}
+  .smallBtn:hover{background:#DCE6F8;}
+  .addBtn{width:100%;padding:12px;border-radius:10px;border:2px dashed var(--navy);background:#fff;color:var(--navy);font-weight:700;font-size:14px;cursor:pointer;}
+  .addBtn:hover{background:var(--navy-light);}
+  .refreshBtn{width:100%;padding:10px;border-radius:9px;border:none;background:var(--navy);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer;margin-bottom:14px;}
+  .refreshBtn:hover{background:#122447;}
+  .atp-row{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--gray-line);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+  .atp-row-top{display:flex;gap:10px;align-items:flex-start;}
+  .atp-num{font-weight:700;color:#fff;background:var(--orange);border-radius:50%;width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12.5px;margin-top:2px;}
+  .atp-body{flex:1;min-width:0;}
+  .atp-body .cp-ref{font-size:11px;color:var(--muted);margin-bottom:2px;}
+  .atp-body .tp-text{font-size:13.5px;color:var(--text);word-wrap:break-word;}
+  .atp-moves{display:flex;align-items:center;flex-shrink:0;}
+  .drag-handle{cursor:grab;color:var(--muted);font-size:18px;line-height:1;padding:4px 8px;user-select:none;border-radius:5px;}
+  .drag-handle:hover{background:var(--navy-light);color:var(--navy);}
+  .drag-handle:active{cursor:grabbing;}
+  .atp-row{transition:opacity .15s ease, box-shadow .15s ease;}
+  .atp-row.dragging{opacity:.4;}
+  .atp-row.drag-over{box-shadow:0 0 0 2px var(--orange);}
+  .atp-fields{display:flex;gap:14px;flex-wrap:wrap;background:var(--navy-light);border-radius:7px;padding:10px 12px;}
+  .atp-field-group{display:flex;flex-direction:column;gap:4px;}
+  .atp-field-group .fg-label{font-size:10.5px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.03em;}
+  .atp-waktu-inputs{display:flex;align-items:center;gap:6px;}
+  .atp-waktu-inputs input[type=number]{width:56px;font-size:13px;padding:6px 7px;border:1px solid var(--gray-line);border-radius:6px;margin-bottom:0;text-align:center;}
+  .atp-waktu-inputs span.x-sep{font-size:12px;color:var(--muted);font-weight:700;}
+  .atp-waktu-total{font-size:12px;color:var(--navy);font-weight:700;background:#fff;border:1px solid var(--gray-line);border-radius:6px;padding:6px 10px;white-space:nowrap;}
+  .atp-select-inline{width:150px;margin-bottom:0;font-size:12.5px;padding:6px 8px;}
+  .empty-hint{font-size:12.5px;color:var(--muted);font-style:italic;padding:8px 2px;}
+  .actions{position:sticky;bottom:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);padding:14px;border-radius:14px;box-shadow:0 6px 22px rgba(27,52,97,.2);border:1px solid var(--gray-line);margin-top:20px;}
+  .btn{border:none;border-radius:9px;padding:12px 20px;font-size:13.5px;font-weight:700;cursor:pointer;}
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover{background:#122447;}
+  .btn-ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy);}
+  .btn-ghost:hover{background:var(--navy-light);}
+  .btn-example{background:var(--orange);color:#fff;}
+  .btn-example:hover{background:#E39602;}
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:8px;font-size:13.5px;box-shadow:0 6px 18px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .25s ease, top .25s ease;z-index:999;}
+  .toast.show{opacity:1;top:26px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,15,30,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:#fff;border-radius:12px;max-width:640px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+  .modal-head{background:var(--navy);color:#fff;padding:20px 24px;position:relative;}
+  .modal-head h3{margin:0 0 4px;font-size:18px;}
+  .modal-head p{margin:0;font-size:13px;color:#C9D3E8;}
+  .modal-head .bar{height:4px;background:var(--orange);border-radius:2px;margin-top:14px;}
+  .modal-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.16);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;line-height:1;}
+  .modal-close:hover{background:rgba(255,255,255,.3);}
+  .modal-body{padding:20px 24px;overflow-y:auto;color:var(--text);}
+  .modal-body ol{margin:0;padding-left:1.2rem;display:grid;gap:12px;}
+  .modal-body li strong{color:var(--navy);}
+  .modal-body .modal-note{background:var(--orange-soft);color:#6B5000;border-left:4px solid var(--orange);border-radius:6px;padding:10px 12px;font-size:12.5px;margin-top:16px;}
+  @media (max-width:600px){
+    .grid2{grid-template-columns:1fr;}
+    .atp-fields{flex-direction:column;gap:10px;}
+    .atp-select-inline{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Pemetaan Tujuan Pembelajaran (TP)</h1>
+    <p>Pendidikan Jarak Jauh (PJJ) &mdash; Model Implementasi PJJ Jenjang SMP Wilayah Maluku Tengah</p>
+    <div class="bar"></div>
+  </header>
+
+  <div class="card">
+    <div class="note">Isi identitas, lalu lengkapi bagian CP dan Rumusan TP. Susunan ATP tersusun otomatis dari TP yang Anda tambahkan &mdash; tekan <strong>"Perbarui Daftar ATP"</strong> sebelum menyusun ATP. Total JP akan terisi otomatis di bagian Identitas.</div>
+    <h2>Identitas</h2>
+    <div class="grid2">
+      <div><label>Sekolah Model</label><input type="text" id="sekolah" placeholder="Contoh: SMPN 50 Maluku Tengah"></div>
+      <div><label>Fase</label>
+        <select id="fase">
+          <option value="">&mdash; Pilih Fase/Kelas &mdash;</option>
+          <option value="Fase D / Kelas VII">Fase D / Kelas VII</option>
+          <option value="Fase D / Kelas VIII">Fase D / Kelas VIII</option>
+          <option value="Fase D / Kelas IX">Fase D / Kelas IX</option>
+        </select>
+      </div>
+      <div><label>Mata Pelajaran</label><input type="text" id="mapel" list="mapelList" placeholder="Pilih atau ketik nama mata pelajaran"></div>
+      <div><label>Guru Lokal (Sekolah Model)</label><input type="text" id="gurulokal" placeholder="Contoh: Kevin, S.Pd"></div>
+      <div style="grid-column:1/-1;">
+        <label>Total JP (otomatis, dari Susunan ATP)</label>
+        <div id="totalJPDisplay" style="font-size:16px;font-weight:700;color:var(--navy);background:var(--navy-light);border:1px solid var(--gray-line);border-radius:7px;padding:10px 12px;margin-bottom:12px;">0 JP</div>
+      </div>
+    </div>
+    <datalist id="mapelList">
+      <option value="Pendidikan Agama dan Budi Pekerti"><option value="Pendidikan Pancasila">
+      <option value="Bahasa Indonesia"><option value="Matematika"><option value="Bahasa Inggris">
+      <option value="Pendidikan Jasmani, Olahraga, dan Kesehatan"><option value="Sejarah">
+      <option value="Seni Budaya dan Keterampilan"><option value="Bimbingan Konseling">
+      <option value="IPA"><option value="IPS"><option value="Fisika"><option value="Kimia">
+      <option value="Biologi"><option value="Sosiologi"><option value="Ekonomi"><option value="Geografi">
+      <option value="Informatika/TIK">
+    </datalist>
+  </div>
+
+  <div class="card">
+    <h2>A. CP dan Rumusan TP</h2>
+    <p class="sub">Pada setiap Capaian Pembelajaran (CP), rumuskan menjadi satu atau lebih Tujuan Pembelajaran (TP).</p>
+    <div id="cpContainer"></div>
+    <button type="button" class="addBtn" onclick="addCP()">+ Tambah CP</button>
+  </div>
+
+  <div class="card">
+    <h2>B. Susunan ATP</h2>
+    <p class="sub">Daftar berikut memuat seluruh TP dari bagian CP dan Rumusan TP di atas. Geser (drag and drop) ikon &#9776; untuk menyusun ATP, lalu lengkapi alokasi waktu, semester, dan pengorganisasian pembelajarannya.</p>
+
+    <details class="panduan-dropdown" id="panduanPengorganisasian">
+      <summary>Lihat panduan menentukan Pengorganisasian Pembelajaran</summary>
+      <div class="panduan-table-wrap">
+        <table class="panduan-table">
+          <thead>
+            <tr><th>Kriteria</th><th>Mata Pelajaran</th><th>Interdisipliner</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cakupan materi</td>
+              <td>Tercakup dalam kompetensi satu mata pelajaran saja.</td>
+              <td>Melibatkan keterpaduan dua mata pelajaran atau lebih dalam satu tema.</td>
+            </tr>
+            <tr>
+              <td>Contoh TP</td>
+              <td>TP spesifik pada capaian inti mata pelajaran, tanpa perlu keterlibatan mapel lain.</td>
+              <td>TP yang menghubungkan konsep lintas mapel, misalnya proyek tema lingkungan yang memadukan IPA dan IPS.</td>
+            </tr>
+            <tr>
+              <td>Guru pengampu</td>
+              <td>Satu guru mata pelajaran terkait.</td>
+              <td>Gabungan guru dari beberapa mata pelajaran yang terlibat dalam tema.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+    <button type="button" class="refreshBtn" onclick="refreshATP()">&#8635; Perbarui Daftar ATP</button>
+    <div id="atpContainer"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-ghost" id="openGuideBtn" type="button">Panduan</button>
+    <button class="btn btn-ghost" id="openFileBtn" type="button">Buka File</button>
+    <button class="btn btn-ghost" id="saveFileBtn" type="button">Simpan sebagai File</button>
+    <button class="btn btn-example" onclick="loadExample()">Muat Contoh</button>
+    <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+    <button class="btn btn-primary" onclick="exportDocx()">Ekspor Dok (.docx)</button>
+  </div>
+  <input type="file" id="stateFileInput" accept="application/json" style="display:none">
+</div>
+
+<div class="modal-overlay" id="guideModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <button type="button" class="modal-close" id="closeGuideBtn">&times;</button>
+      <h3>Panduan Singkat Pengisian</h3>
+      <p>Pemetaan Tujuan Pembelajaran (TP)</p>
+      <div class="bar"></div>
+    </div>
+    <div class="modal-body">
+      <ol>
+        <li><strong>Isi Identitas</strong> sekolah model, fase, mata pelajaran, dan guru lokal pendamping.</li>
+        <li><strong>Tambah CP.</strong> Untuk tiap Capaian Pembelajaran, klik "+ Tambah CP" dan isi rumusannya.</li>
+        <li><strong>Tambah TP di dalam tiap CP.</strong> Klik "+ Tambah TP" pada blok CP terkait untuk menurunkan satu atau lebih Tujuan Pembelajaran darinya.</li>
+        <li><strong>Perbarui Daftar ATP.</strong> Setelah menambah/mengubah TP, klik tombol "Perbarui Daftar ATP" pada bagian Susunan ATP agar daftar menyesuaikan.</li>
+        <li><strong>Lengkapi tiap TP pada ATP.</strong> Geser ikon &#9776; di sisi kanan tiap baris untuk mengurutkan (drag and drop), lalu isi Alokasi Waktu (jumlah pertemuan &times; JP per pertemuan &mdash; total JP terhitung otomatis dan terjumlah ke Identitas), pilih Semester (Ganjil/Genap), dan pilih Pengorganisasian Pembelajaran (Mata Pelajaran/Interdisipliner) untuk tiap TP.</li>
+        <li><strong>Data tersimpan otomatis</strong> di perangkat ini. Gunakan "Simpan sebagai File" untuk menyimpan salinan, dan "Buka File" untuk memuatnya kembali di perangkat lain.</li>
+        <li><strong>Ekspor Dok (.docx)</strong> untuk mengunduh hasil sebagai dokumen Word siap digunakan pada langkah penyusunan RPP PJJ berikutnya.</li>
+      </ol>
+      <div class="modal-note">Tombol "Reset" akan mengosongkan seluruh isian termasuk data tersimpan otomatis &mdash; gunakan dengan hati-hati.</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cpCount = 0;
+let tpCount = 0;
+let atpOrder = [];        // array of tpId, urutan ATP
+let atpAlokasi = {};      // {tpId: 'Mapel' | 'Interdisipliner'}  -> Pengorganisasian Pembelajaran
+let atpSemester = {};     // {tpId: 'Ganjil' | 'Genap'}
+let atpPertemuan = {};    // {tpId: number}
+let atpJP = {};           // {tpId: number}
+
+function esc2(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function addCP(prefill){
+  cpCount++;
+  const cid = cpCount;
+  const div = document.createElement('div');
+  div.className = 'cp-block';
+  div.id = 'cp' + cid;
+  div.innerHTML = `
+    <div class="cp-title">
+      <span>CP ${cid}</span>
+      <button type="button" class="removeBtn" onclick="removeCP(${cid})">Hapus CP</button>
+    </div>
+    <label>Elemen / Kode CP (opsional)</label>
+    <input type="text" id="cp${cid}_kode" placeholder="Contoh: Pemahaman Sains">
+    <label>Capaian Pembelajaran</label>
+    <textarea id="cp${cid}_rumusan" rows="2" placeholder="Tuliskan rumusan CP di sini..."></textarea>
+    <div id="cp${cid}_tpWrap"></div>
+    <button type="button" class="smallBtn" onclick="addTP(${cid})">+ Tambah TP</button>
+  `;
+  document.getElementById('cpContainer').appendChild(div);
+
+  if(prefill){
+    document.getElementById(`cp${cid}_kode`).value = prefill.kode || '';
+    document.getElementById(`cp${cid}_rumusan`).value = prefill.rumusan || '';
+    (prefill.tp||[]).forEach(t => addTP(cid, t.teks));
+  }
+  scheduleAutosave();
+}
+
+function addTP(cid, prefillText){
+  tpCount++;
+  const tid = tpCount;
+  const wrap = document.getElementById(`cp${cid}_tpWrap`);
+  const row = document.createElement('div');
+  row.className = 'tp-row';
+  row.id = 'tprow' + tid;
+  row.setAttribute('data-tpid', tid);
+  row.setAttribute('data-cpid', cid);
+  row.innerHTML = `
+    <div class="tp-label">TP</div>
+    <textarea id="tp${tid}" placeholder="Rumusan Tujuan Pembelajaran (TP)...">${prefillText?esc2(prefillText):''}</textarea>
+    <button type="button" class="removeBtn" onclick="removeTP(${tid})">Hapus</button>
+  `;
+  wrap.appendChild(row);
+  scheduleAutosave();
+}
+
+function removeCP(cid){
+  const el = document.getElementById('cp' + cid);
+  if(el) el.remove();
+  refreshATP();
+  scheduleAutosave();
+}
+function removeTP(tid){
+  const el = document.getElementById('tprow' + tid);
+  if(el) el.remove();
+  refreshATP();
+  scheduleAutosave();
+}
+
+function refreshATP(){
+  const rows = Array.from(document.querySelectorAll('.tp-row'));
+  const currentIds = rows.map(r => Number(r.getAttribute('data-tpid')));
+  atpOrder = atpOrder.filter(id => currentIds.includes(id));
+  currentIds.forEach(id => { if(!atpOrder.includes(id)) atpOrder.push(id); });
+  [atpAlokasi, atpSemester, atpPertemuan, atpJP].forEach(map=>{
+    Object.keys(map).forEach(k => { if(!currentIds.includes(Number(k))) delete map[k]; });
+  });
+  atpOrder.forEach(id => {
+    if(!atpAlokasi[id]) atpAlokasi[id] = 'Mapel';
+    if(!atpSemester[id]) atpSemester[id] = 'Ganjil';
+    if(atpPertemuan[id]===undefined) atpPertemuan[id] = 1;
+    if(atpJP[id]===undefined) atpJP[id] = 2;
+  });
+  renderATPList();
+}
+
+function renderATPList(){
+  const cont = document.getElementById('atpContainer');
+  cont.innerHTML = '';
+  if(atpOrder.length===0){
+    cont.innerHTML = '<div class="empty-hint">Belum ada TP. Tambahkan CP dan TP pada Bagian CP dan Rumusan TP, lalu klik "Perbarui Daftar ATP".</div>';
+    updateTotalJPGlobal();
+    return;
+  }
+  atpOrder.forEach((tid, idx) => {
+    const taEl = document.getElementById('tp' + tid);
+    const rowEl = document.getElementById('tprow' + tid);
+    if(!taEl || !rowEl) return;
+    const cid = rowEl.getAttribute('data-cpid');
+    const cpKodeEl = document.getElementById(`cp${cid}_kode`);
+    const cpKode = (cpKodeEl && cpKodeEl.value) ? cpKodeEl.value : `CP ${cid}`;
+    const text = taEl.value || '(TP belum diisi)';
+    const alokasi = atpAlokasi[tid] || 'Mapel';
+    const semester = atpSemester[tid] || 'Ganjil';
+    const pertemuan = atpPertemuan[tid] !== undefined ? atpPertemuan[tid] : 1;
+    const jp = atpJP[tid] !== undefined ? atpJP[tid] : 2;
+    const total = (Number(pertemuan)||0) * (Number(jp)||0);
+
+    const row = document.createElement('div');
+    row.className = 'atp-row';
+    row.setAttribute('draggable', 'false');
+    row.setAttribute('data-tpid', tid);
+    row.addEventListener('dragover', onDragOver);
+    row.addEventListener('dragenter', onDragEnter);
+    row.addEventListener('dragleave', onDragLeave);
+    row.addEventListener('drop', onDrop);
+    row.addEventListener('dragend', onDragEnd);
+    row.innerHTML = `
+      <div class="atp-row-top">
+        <div class="atp-num">${idx+1}</div>
+        <div class="atp-body">
+          <div class="cp-ref">dari ${esc2(cpKode)}</div>
+          <div class="tp-text">${esc2(text)}</div>
+        </div>
+        <div class="atp-moves">
+          <span class="drag-handle" draggable="true" ondragstart="onDragStart(event, ${tid})" title="Geser untuk mengurutkan">&#9776;</span>
+        </div>
+      </div>
+      <div class="atp-fields">
+        <div class="atp-field-group">
+          <span class="fg-label">Alokasi Waktu</span>
+          <div class="atp-waktu-inputs">
+            <input type="number" min="0" id="atp_pertemuan_${tid}" value="${pertemuan}" onchange="onPertemuanChange(${tid}, this.value)" title="Jumlah pertemuan">
+            <span class="x-sep">pertemuan</span>
+            <span class="x-sep">&times;</span>
+            <input type="number" min="0" id="atp_jp_${tid}" value="${jp}" onchange="onJPChange(${tid}, this.value)" title="JP per pertemuan">
+            <span class="x-sep">JP =</span>
+            <span class="atp-waktu-total" id="atp_total_${tid}">${total} JP</span>
+          </div>
+        </div>
+        <div class="atp-field-group">
+          <span class="fg-label">Semester</span>
+          <select class="atp-select-inline" onchange="setSemester(${tid}, this.value)">
+            <option value="Ganjil" ${semester==='Ganjil'?'selected':''}>Ganjil</option>
+            <option value="Genap" ${semester==='Genap'?'selected':''}>Genap</option>
+          </select>
+        </div>
+        <div class="atp-field-group">
+          <span class="fg-label">Pengorganisasian Pembelajaran</span>
+          <select class="atp-select-inline" onchange="setAlokasi(${tid}, this.value)">
+            <option value="Mapel" ${alokasi==='Mapel'?'selected':''}>Mata Pelajaran</option>
+            <option value="Interdisipliner" ${alokasi==='Interdisipliner'?'selected':''}>Interdisipliner</option>
+          </select>
+        </div>
+      </div>
+    `;
+    cont.appendChild(row);
+  });
+  updateTotalJPGlobal();
+}
+
+function setAlokasi(tid, val){ atpAlokasi[tid] = val; scheduleAutosave(); }
+function setSemester(tid, val){ atpSemester[tid] = val; scheduleAutosave(); }
+function onPertemuanChange(tid, val){
+  atpPertemuan[tid] = Math.max(0, Number(val) || 0);
+  document.getElementById(`atp_pertemuan_${tid}`).value = atpPertemuan[tid];
+  updateAtpTotal(tid);
+  scheduleAutosave();
+}
+function onJPChange(tid, val){
+  atpJP[tid] = Math.max(0, Number(val) || 0);
+  document.getElementById(`atp_jp_${tid}`).value = atpJP[tid];
+  updateAtpTotal(tid);
+  scheduleAutosave();
+}
+function updateAtpTotal(tid){
+  const total = (atpPertemuan[tid]||0) * (atpJP[tid]||0);
+  const el = document.getElementById(`atp_total_${tid}`);
+  if(el) el.textContent = total + ' JP';
+  updateTotalJPGlobal();
+}
+function updateTotalJPGlobal(){
+  let grandTotal = 0;
+  atpOrder.forEach(tid=>{
+    grandTotal += (Number(atpPertemuan[tid])||0) * (Number(atpJP[tid])||0);
+  });
+  const el = document.getElementById('totalJPDisplay');
+  if(el) el.textContent = grandTotal + ' JP';
+}
+
+let dragTid = null;
+let dragRowEl = null;
+
+function onDragStart(e, tid){
+  const row = e.target.closest('.atp-row');
+  dragTid = tid;
+  dragRowEl = row;
+  e.dataTransfer.effectAllowed = 'move';
+  try{ e.dataTransfer.setData('text/plain', String(tid)); }catch(err){}
+  if(row) row.classList.add('dragging');
+}
+
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const row = e.currentTarget;
+  if(dragRowEl && row !== dragRowEl) row.classList.add('drag-over');
+}
+
+function onDragEnter(e){
+  e.preventDefault();
+}
+
+function onDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onDrop(e){
+  e.preventDefault();
+  const row = e.currentTarget;
+  row.classList.remove('drag-over');
+  if(!dragRowEl || dragRowEl === row) return;
+  const cont = document.getElementById('atpContainer');
+  const rows = Array.from(cont.querySelectorAll('.atp-row'));
+  const fromIdx = rows.indexOf(dragRowEl);
+  const toIdx = rows.indexOf(row);
+  if(fromIdx === -1 || toIdx === -1) return;
+  if(fromIdx < toIdx) row.after(dragRowEl); else row.before(dragRowEl);
+  syncAtpOrderFromDom();
+  renumberATPRows();
+  scheduleAutosave();
+}
+
+function onDragEnd(e){
+  var draggingEls = document.querySelectorAll('.atp-row.dragging');
+  for(var i=0;i<draggingEls.length;i++) draggingEls[i].classList.remove('dragging');
+  var overEls = document.querySelectorAll('.atp-row.drag-over');
+  for(var j=0;j<overEls.length;j++) overEls[j].classList.remove('drag-over');
+  dragTid = null;
+  dragRowEl = null;
+}
+
+function syncAtpOrderFromDom(){
+  const cont = document.getElementById('atpContainer');
+  const rows = Array.from(cont.querySelectorAll('.atp-row'));
+  atpOrder = rows.map(r => Number(r.getAttribute('data-tpid')));
+}
+
+function renumberATPRows(){
+  const cont = document.getElementById('atpContainer');
+  const rows = Array.from(cont.querySelectorAll('.atp-row'));
+  rows.forEach((r, idx) => {
+    const numEl = r.querySelector('.atp-num');
+    if(numEl) numEl.textContent = String(idx + 1);
+  });
+}
+
+
+function resetForm(){
+  document.getElementById('sekolah').value='';
+  document.getElementById('fase').selectedIndex=0;
+  document.getElementById('mapel').value='';
+  document.getElementById('gurulokal').value='';
+  document.getElementById('cpContainer').innerHTML='';
+  cpCount=0; tpCount=0; atpOrder=[]; atpAlokasi={}; atpSemester={}; atpPertemuan={}; atpJP={};
+  renderATPList();
+  try{ localStorage.removeItem(AUTOSAVE_KEY); }catch(e){}
+  showToast('Formulir dikosongkan kembali.');
+}
+
+function loadExample(){
+  document.getElementById('sekolah').value = 'SMPN 50 Maluku Tengah';
+  document.getElementById('fase').value = 'Fase D / Kelas VII';
+  document.getElementById('mapel').value = 'IPA';
+  document.getElementById('gurulokal').value = 'Kevin, S.Pd';
+  document.getElementById('cpContainer').innerHTML = '';
+  cpCount=0; tpCount=0; atpOrder=[]; atpAlokasi={}; atpSemester={}; atpPertemuan={}; atpJP={};
+
+  addCP({
+    kode: 'Pemahaman IPA',
+    rumusan: 'Peserta didik mampu menjelaskan fenomena kemagnetan dan kelistrikan serta penerapannya dalam kehidupan sehari-hari.',
+    tp: [
+      {teks:'Peserta didik dapat menganalisis pola garis gaya magnet pada berbagai bahan.'},
+      {teks:'Peserta didik dapat menjelaskan hubungan antara kelistrikan dan kemagnetan (elektromagnet).'},
+    ]
+  });
+  addCP({
+    kode: 'Keterampilan Proses',
+    rumusan: 'Peserta didik mampu merancang dan melakukan percobaan sederhana secara sistematis.',
+    tp: [
+      {teks:'Peserta didik dapat merancang percobaan sederhana untuk menguji sifat kemagnetan suatu bahan.'},
+    ]
+  });
+
+  refreshATP();
+  if(atpOrder.length>=3){
+    atpAlokasi[atpOrder[0]] = 'Mapel'; atpSemester[atpOrder[0]] = 'Ganjil'; atpPertemuan[atpOrder[0]] = 2; atpJP[atpOrder[0]] = 2;
+    atpAlokasi[atpOrder[1]] = 'Mapel'; atpSemester[atpOrder[1]] = 'Ganjil'; atpPertemuan[atpOrder[1]] = 1; atpJP[atpOrder[1]] = 3;
+    atpAlokasi[atpOrder[2]] = 'Interdisipliner'; atpSemester[atpOrder[2]] = 'Genap'; atpPertemuan[atpOrder[2]] = 2; atpJP[atpOrder[2]] = 3;
+  }
+  renderATPList();
+  showToast('Contoh berhasil dimuat.');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ===================== SIMPAN / BUKA / AUTOSAVE ===================== */
+const AUTOSAVE_KEY = 'cpTpAtpSnt_autosave_v1';
+const TOP_IDS = ['sekolah','fase','mapel','gurulokal'];
+
+function collectState(){
+  const state = {type:'cp-tp-atp-state', version:2};
+  TOP_IDS.forEach(id => state[id] = document.getElementById(id).value);
+
+  const flatIndexOf = {};
+  let flat = 0;
+  const cpBlocks = Array.from(document.querySelectorAll('.cp-block'));
+  state.cp = cpBlocks.map(block=>{
+    const cid = block.id.replace('cp','');
+    const kode = document.getElementById(`cp${cid}_kode`).value || '';
+    const rumusan = document.getElementById(`cp${cid}_rumusan`).value || '';
+    const tpRows = Array.from(document.querySelectorAll(`#cp${cid}_tpWrap .tp-row`));
+    const tp = tpRows.map(r=>{
+      const tid = Number(r.getAttribute('data-tpid'));
+      flatIndexOf[tid] = flat++;
+      return { teks: document.getElementById('tp'+tid).value || '' };
+    });
+    return { kode, rumusan, tp };
+  });
+
+  state.atpOrderFlat = atpOrder.map(tid => flatIndexOf[tid]).filter(v=>v!==undefined);
+  state.atpAlokasiFlat = {};
+  state.atpSemesterFlat = {};
+  state.atpPertemuanFlat = {};
+  state.atpJPFlat = {};
+  Object.keys(atpAlokasi).forEach(tid=>{
+    const fi = flatIndexOf[tid];
+    if(fi!==undefined) state.atpAlokasiFlat[fi] = atpAlokasi[tid];
+  });
+  Object.keys(atpSemester).forEach(tid=>{
+    const fi = flatIndexOf[tid];
+    if(fi!==undefined) state.atpSemesterFlat[fi] = atpSemester[tid];
+  });
+  Object.keys(atpPertemuan).forEach(tid=>{
+    const fi = flatIndexOf[tid];
+    if(fi!==undefined) state.atpPertemuanFlat[fi] = atpPertemuan[tid];
+  });
+  Object.keys(atpJP).forEach(tid=>{
+    const fi = flatIndexOf[tid];
+    if(fi!==undefined) state.atpJPFlat[fi] = atpJP[tid];
+  });
+  return state;
+}
+
+function applyState(state){
+  TOP_IDS.forEach(id=>{ if(state[id]!==undefined) document.getElementById(id).value = state[id]; });
+  document.getElementById('cpContainer').innerHTML = '';
+  cpCount=0; tpCount=0; atpOrder=[]; atpAlokasi={}; atpSemester={}; atpPertemuan={}; atpJP={};
+  (state.cp||[]).forEach(cpData => addCP(cpData));
+
+  // tpId baru = flatIndex+1 karena counter direset dan dibuat berurutan sesuai state.cp
+  atpOrder = (state.atpOrderFlat||[]).map(fi => fi+1);
+  Object.entries(state.atpAlokasiFlat||{}).forEach(([fi,val])=>{ atpAlokasi[Number(fi)+1] = val; });
+  Object.entries(state.atpSemesterFlat||{}).forEach(([fi,val])=>{ atpSemester[Number(fi)+1] = val; });
+  Object.entries(state.atpPertemuanFlat||{}).forEach(([fi,val])=>{ atpPertemuan[Number(fi)+1] = val; });
+  Object.entries(state.atpJPFlat||{}).forEach(([fi,val])=>{ atpJP[Number(fi)+1] = val; });
+  refreshATP();
+}
+
+let autosaveTimer = null;
+function scheduleAutosave(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>{
+    try{ localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(collectState())); }
+    catch(e){ console.warn('Autosave gagal', e); }
+  }, 600);
+}
+
+function tryRestoreAutosave(){
+  try{
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if(!raw) return false;
+    const state = JSON.parse(raw);
+    if(state && state.type==='cp-tp-atp-state'){ applyState(state); showToast('Data tersimpan sebelumnya dimuat otomatis.'); return true; }
+  }catch(e){ console.warn('Gagal memuat autosave', e); }
+  return false;
+}
+
+function saveToFile(){
+  const state = collectState();
+  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+  const a = document.createElement('a');
+  a.href = dataUri;
+  const mapelSlug = (document.getElementById('mapel').value || 'cp-tp-atp').replace(/\s+/g,'-').toLowerCase();
+  a.download = `cp-tp-atp-${mapelSlug}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('Data berhasil disimpan sebagai file.');
+}
+
+function openFromFile(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const state = JSON.parse(reader.result);
+      if(!state || state.type!=='cp-tp-atp-state'){ showToast('File tidak dikenali sebagai data CP-TP-ATP.'); return; }
+      applyState(state);
+      scheduleAutosave();
+      showToast('Data berhasil dimuat dari file.');
+    }catch(e){ console.error(e); showToast('Gagal membaca file: format tidak valid.'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ===================== DROPDOWN PANDUAN (animasi smooth) ===================== */
+function setupSmoothDetails(details){
+  const summary = details.querySelector(':scope > summary');
+  const content = details.querySelector(':scope > .panduan-table-wrap');
+  if(!summary || !content) return;
+  let animation = null;
+  let isClosing = false;
+  let isExpanding = false;
+
+  summary.addEventListener('click', (e) => {
+    e.preventDefault();
+    details.style.overflow = 'hidden';
+    if(isClosing || !details.open){
+      openDetails();
+    } else if(isExpanding || details.open){
+      shrinkDetails();
+    }
+  });
+
+  function shrinkDetails(){
+    isClosing = true;
+    const startHeight = `${details.offsetHeight}px`;
+    const endHeight = `${summary.offsetHeight}px`;
+    if(animation) animation.cancel();
+    animation = details.animate({ height: [startHeight, endHeight] }, { duration: 220, easing: 'ease-out' });
+    animation.onfinish = () => onAnimationFinish(false);
+    animation.oncancel = () => { isClosing = false; };
+  }
+
+  function openDetails(){
+    details.style.height = `${details.offsetHeight}px`;
+    details.open = true;
+    window.requestAnimationFrame(() => expandDetails());
+  }
+
+  function expandDetails(){
+    isExpanding = true;
+    const startHeight = `${details.offsetHeight}px`;
+    const endHeight = `${summary.offsetHeight + content.offsetHeight}px`;
+    if(animation) animation.cancel();
+    animation = details.animate({ height: [startHeight, endHeight] }, { duration: 220, easing: 'ease-out' });
+    animation.onfinish = () => onAnimationFinish(true);
+    animation.oncancel = () => { isExpanding = false; };
+  }
+
+  function onAnimationFinish(open){
+    details.open = open;
+    animation = null;
+    isClosing = false;
+    isExpanding = false;
+    details.style.height = '';
+    details.style.overflow = '';
+  }
+}
+var panduanDropdowns = document.querySelectorAll('details.panduan-dropdown');
+for(var pdIdx = 0; pdIdx < panduanDropdowns.length; pdIdx++){ setupSmoothDetails(panduanDropdowns[pdIdx]); }
+
+function openGuide(){ document.getElementById('guideModal').classList.add('show'); }
+function closeGuide(){ document.getElementById('guideModal').classList.remove('show'); }
+
+document.getElementById('openGuideBtn').addEventListener('click', openGuide);
+document.getElementById('closeGuideBtn').addEventListener('click', closeGuide);
+document.getElementById('guideModal').addEventListener('click', (e)=>{ if(e.target.id==='guideModal') closeGuide(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeGuide(); });
+
+document.getElementById('saveFileBtn').addEventListener('click', saveToFile);
+document.getElementById('openFileBtn').addEventListener('click', ()=> document.getElementById('stateFileInput').click());
+document.getElementById('stateFileInput').addEventListener('change', (e)=>{ const f=e.target.files[0]; if(f) openFromFile(f); e.target.value=''; });
+
+TOP_IDS.forEach(id=>{
+  const elm = document.getElementById(id);
+  elm.addEventListener('input', scheduleAutosave);
+  elm.addEventListener('change', scheduleAutosave);
+});
+document.getElementById('cpContainer').addEventListener('input', scheduleAutosave);
+document.getElementById('cpContainer').addEventListener('change', scheduleAutosave);
+
+/* ===================== EKSPOR DOCX ===================== */
+function xmlEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
+
+function xRun(text, opts){
+  opts = opts || {};
+  let rpr = '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>';
+  if(opts.bold) rpr += '<w:b/>';
+  if(opts.color) rpr += `<w:color w:val="${opts.color}"/>`;
+  rpr += `<w:sz w:val="${opts.size||22}"/><w:szCs w:val="${opts.size||22}"/></w:rPr>`;
+  return `<w:r>${rpr}<w:t xml:space="preserve">${xmlEsc(text)}</w:t></w:r>`;
+}
+function xPara(content, opts){
+  opts = opts || {};
+  let pprInner = `<w:spacing w:before="${opts.before||0}" w:after="${opts.after!==undefined?opts.after:140}" w:line="300" w:lineRule="auto"/>`;
+  if(opts.borderBottom) pprInner += `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="F9A703"/></w:pBdr>`;
+  if(opts.align) pprInner += `<w:jc w:val="${opts.align}"/>`;
+  const ppr = `<w:pPr>${pprInner}</w:pPr>`;
+  let runs;
+  if(Array.isArray(content)) runs = content.map(r => typeof r==='string' ? xRun(r,opts) : xRun(r.text, r)).join('');
+  else runs = xRun(content, opts);
+  return `<w:p>${ppr}${runs}</w:p>`;
+}
+function xCell(innerXml, opts){
+  opts = opts || {};
+  let tcPr = `<w:tcW w:w="${opts.width || 2000}" w:type="dxa"/>`;
+  if(opts.fill) tcPr += `<w:shd w:val="clear" w:color="auto" w:fill="${opts.fill}"/>`;
+  tcPr += '<w:vAlign w:val="center"/>';
+  return `<w:tc><w:tcPr>${tcPr}</w:tcPr>${innerXml}</w:tc>`;
+}
+function headerCell(text, width, opts){ opts = opts || {}; const paraOpts = {bold:true,color:'FFFFFF',size:20,after:0}; if(opts.align) paraOpts.align = opts.align; return xCell(xPara(text,paraOpts), {width, fill:'001D62'}); }
+function bodyCell(xmlContent, width){ return xCell(xmlContent, {width}); }
+function xRow(cellsXml, isHeader){ return `<w:tr><w:trPr>${isHeader?'<w:tblHeader/>':''}<w:cantSplit/></w:trPr>${cellsXml}</w:tr>`; }
+function xTable(rowsXml, colWidths){
+  const totalWidth = colWidths.reduce((a,b)=>a+b,0);
+  const gridXml = '<w:tblGrid>' + colWidths.map(w=>`<w:gridCol w:w="${w}"/>`).join('') + '</w:tblGrid>';
+  return `<w:tbl><w:tblPr><w:tblW w:w="${totalWidth}" w:type="dxa"/><w:tblBorders>
+    <w:top w:val="single" w:sz="4" w:color="999999"/><w:left w:val="single" w:sz="4" w:color="999999"/>
+    <w:bottom w:val="single" w:sz="4" w:color="999999"/><w:right w:val="single" w:sz="4" w:color="999999"/>
+    <w:insideH w:val="single" w:sz="4" w:color="999999"/><w:insideV w:val="single" w:sz="4" w:color="999999"/>
+    </w:tblBorders><w:tblCellMar><w:top w:w="80" w:type="dxa"/><w:left w:w="120" w:type="dxa"/><w:bottom w:w="80" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tblCellMar>
+    <w:tblLayout w:type="fixed"/></w:tblPr>${gridXml}${rowsXml}</w:tbl>`;
+}
+
+function buildIdentityTableXml(){
+  const fields = [['Sekolah Model','sekolah'],['Fase','fase'],['Mata Pelajaran','mapel'],['Guru Lokal (Sekolah Model)','gurulokal']];
+  const rows = fields.map(([label,id])=>{
+    const val = document.getElementById(id).value || '\u2014';
+    return xRow(headerCell(label,4176) + bodyCell(xPara(val,{size:20,after:0}), 9782));
+  }).join('');
+  const totalJPText = (document.getElementById('totalJPDisplay') && document.getElementById('totalJPDisplay').textContent) || '0 JP';
+  const totalRow = xRow(headerCell('Total JP',4176) + bodyCell(xPara(totalJPText,{size:20,after:0,bold:true}), 9782));
+  return xTable(rows + totalRow, [4176, 9782]);
+}
+
+function buildCpTpXml(){
+  const cpBlocks = Array.from(document.querySelectorAll('.cp-block'));
+  return cpBlocks.map(block=>{
+    const cid = block.id.replace('cp','');
+    const kode = document.getElementById(`cp${cid}_kode`).value || `CP ${cid}`;
+    const rumusan = document.getElementById(`cp${cid}_rumusan`).value || '\u2014';
+    const heading = xPara(kode, {bold:true,color:'001D62',size:24,before:160,after:60});
+    const rumusanPara = xPara([{text:'Capaian Pembelajaran (CP): ',bold:true,size:20},{text:rumusan,size:20}],{after:80});
+    const tpRows = Array.from(document.querySelectorAll(`#cp${cid}_tpWrap .tp-row`));
+    const tpParas = tpRows.map((r,i)=>{
+      const tid = r.getAttribute('data-tpid');
+      const teks = document.getElementById('tp'+tid).value || '\u2014';
+      return xPara([{text:`TP ${cid}.${i+1}: `,bold:true,size:20},{text:teks,size:20}],{after:60});
+    }).join('');
+    return heading + rumusanPara + tpParas;
+  }).join('');
+}
+
+function buildAtpTableXml(){
+  if(atpOrder.length===0) return xPara('Belum ada data ATP.',{size:20});
+  const header = xRow(
+    headerCell('No.',773,{align:'center'}) + headerCell('Elemen/Kode CP',1701,{align:'center'}) + headerCell('Rumusan TP (ATP)',4216,{align:'center'}) +
+    headerCell('Semester',1237,{align:'center'}) + headerCell('Alokasi Waktu',2783,{align:'center'}) + headerCell('Pengorganisasian Pembelajaran',3248,{align:'center'}), true);
+  const rows = atpOrder.map((tid, idx)=>{
+    const rowEl = document.getElementById('tprow'+tid);
+    const taEl = document.getElementById('tp'+tid);
+    if(!rowEl || !taEl) return '';
+    const cid = rowEl.getAttribute('data-cpid');
+    const cpKodeEl = document.getElementById(`cp${cid}_kode`);
+    const cpKode = (cpKodeEl && cpKodeEl.value) ? cpKodeEl.value : `CP ${cid}`;
+    const teks = taEl.value || '\u2014';
+    const alokasi = atpAlokasi[tid] || 'Mapel';
+    const alokasiLabel = alokasi==='Mapel' ? 'Mata Pelajaran' : 'Interdisipliner';
+    const semester = atpSemester[tid] || 'Ganjil';
+    const pertemuan = atpPertemuan[tid] !== undefined ? atpPertemuan[tid] : 0;
+    const jp = atpJP[tid] !== undefined ? atpJP[tid] : 0;
+    const total = pertemuan * jp;
+    const waktuLabel = `${pertemuan} pertemuan \u00d7 ${jp} JP = ${total} JP`;
+    return xRow(
+      bodyCell(xPara(String(idx+1),{size:20,after:0,align:'center'}), 773) +
+      bodyCell(xPara(cpKode,{size:19,after:0}), 1701) +
+      bodyCell(xPara(teks,{size:19,after:0}), 4216) +
+      bodyCell(xPara(semester,{size:19,after:0,align:'center'}), 1237) +
+      bodyCell(xPara(waktuLabel,{size:19,after:0}), 2783) +
+      bodyCell(xPara(alokasiLabel,{size:19,after:0}), 3248)
+    );
+  }).join('');
+  return xTable(header+rows, [773,1701,4216,1237,2783,3248]);
+}
+
+async function exportDocx(){
+  if(typeof JSZip === 'undefined'){ showToast('Gagal memuat pustaka JSZip. Periksa koneksi internet.'); return; }
+
+  const title = xPara('Dokumen Pemetaan Tujuan Pembelajaran (TP)', {bold:true,color:'001D62',size:36,after:40,borderBottom:true});
+  const subtitle = xPara('Program Pengembangan Model PJJ Maluku Tengah', {color:'555555',size:22,after:200});
+
+  const hId = xPara('Identitas', {bold:true,color:'001D62',size:26,before:100,after:100,borderBottom:true});
+  const identityTable = buildIdentityTableXml();
+
+  const hAB = xPara('A. Analisis CP dan Rumusan Tujuan Pembelajaran', {bold:true,color:'001D62',size:26,before:240,after:100,borderBottom:true});
+  const abXml = buildCpTpXml();
+
+  const hC = xPara('B. Alur Tujuan Pembelajaran (ATP)', {bold:true,color:'001D62',size:26,before:240,after:100,borderBottom:true});
+  const cXml = buildAtpTableXml();
+
+  const sectPr = `<w:sectPr><w:headerReference w:type="default" r:id="rIdHdr"/><w:footerReference w:type="default" r:id="rIdFtr"/><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="1080" w:right="1440" w:bottom="1080" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`;
+
+  const bodyXml = title + subtitle + hId + identityTable + xPara('',{after:60})
+    + hAB + abXml
+    + hC + cXml
+    + sectPr;
+
+  const HEADER_TEXT = 'Dokumen Pemetaan Tujuan Pembelajaran (TP) \u2014 PJJ Maluku Tengah';
+  const XML_DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
+  const headerXml = `${XML_DECL}
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="8" w:space="4" w:color="F9A703"/></w:pBdr></w:pPr>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:i/><w:iCs/><w:color w:val="001D62"/><w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t xml:space="preserve">${xmlEsc(HEADER_TEXT)}</w:t></w:r>
+</w:p></w:hdr>`;
+  const footerXml = `${XML_DECL}
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t xml:space="preserve">Halaman </w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t>1</w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t xml:space="preserve"> dari </w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:instrText xml:space="preserve"> NUMPAGES </w:instrText></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t>1</w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>
+</w:p></w:ftr>`;
+
+  const documentXml = `${XML_DECL}
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:body>${bodyXml}</w:body></w:document>`;
+
+  const contentTypesXml = `${XML_DECL}
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
+<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
+</Types>`;
+  const relsXml = `${XML_DECL}
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+  const docRelsXml = `${XML_DECL}
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+<Relationship Id="rIdHdr" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
+<Relationship Id="rIdFtr" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>
+</Relationships>`;
+  const stylesXml = `${XML_DECL}
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+</w:styles>`;
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', contentTypesXml);
+  zip.folder('_rels').file('.rels', relsXml);
+  const wordFolder = zip.folder('word');
+  wordFolder.file('document.xml', documentXml);
+  wordFolder.file('styles.xml', stylesXml);
+  wordFolder.file('header1.xml', headerXml);
+  wordFolder.file('footer1.xml', footerXml);
+  wordFolder.folder('_rels').file('document.xml.rels', docRelsXml);
+
+  try{
+    const base64 = await zip.generateAsync({type:'base64'});
+    const dataUri = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + base64;
+    const mapelSlug = (document.getElementById('mapel').value || 'Pemetaan_TP').replace(/[^a-z0-9]+/gi,'_');
+    const link = document.createElement('a');
+    link.href = dataUri;
+    link.download = `Pemetaan_TP_${mapelSlug}.docx`;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    showToast('File Word (.docx) berhasil diunduh.');
+  } catch(err){ console.error(err); showToast('Terjadi kesalahan saat membuat file .docx.'); }
+}
+
+// init
+if(!tryRestoreAutosave()){
+  renderATPList();
+}
+</script>
+</body>
+</html>
