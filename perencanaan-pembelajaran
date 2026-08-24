@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dokumen Perencanaan Pembelajaran — PJJ SMA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    --blue:#001D62; --blue-light:#EAF0FB; --yellow:#F9A703; --yellow-soft:#FFF3CD;
+    --gray-line:#D8DEE9; --text:#1C2333; --muted:#5B6577;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Calibri,"Segoe UI",Arial,sans-serif;background:#F5F7FB;color:var(--text);padding:32px 16px 80px;}
+  .wrap{max-width:920px;margin:0 auto;}
+  header.top{background:var(--blue);color:#fff;border-radius:14px;padding:26px 30px;margin-bottom:22px;box-shadow:0 6px 18px rgba(0,29,98,.18);}
+  header.top h1{margin:0 0 6px;font-size:22px;}
+  header.top p{margin:0;color:#CBD5E8;font-size:14px;}
+  .bar{height:4px;background:var(--yellow);border-radius:2px;margin-top:16px;}
+  .card{background:#fff;border:1px solid var(--gray-line);border-radius:12px;padding:22px 24px;margin-bottom:18px;}
+  .card h2{font-size:16px;color:var(--blue);margin:0 0 14px;padding-bottom:10px;border-bottom:3px solid var(--yellow);}
+  .card h3{font-size:14px;color:var(--blue);margin:18px 0 8px;}
+  .note{background:var(--yellow-soft);border-left:4px solid var(--yellow);padding:8px 12px;font-size:12.5px;color:#6b5000;border-radius:4px;margin-bottom:14px;}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  input[type=text], textarea, select{width:100%;font-family:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--gray-line);border-radius:7px;margin-bottom:12px;resize:vertical;color:var(--text);background:#fff;}
+  input[type=text]:focus, textarea:focus, select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-light);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+  .profil-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;background:var(--blue-light);padding:14px 16px;border-radius:8px;margin-bottom:6px;}
+  .profil-item{display:flex;align-items:center;gap:8px;font-size:13.5px;padding:4px 0;}
+  .profil-item input{width:16px;height:16px;margin:0;}
+  .pertemuan-block{border:1.5px solid var(--gray-line);border-radius:10px;padding:18px 18px 8px;margin-bottom:16px;background:#FCFDFF;}
+  .pertemuan-block .pt-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .pt-title span{font-weight:700;color:var(--blue);font-size:13.5px;}
+  .removeBtn{background:#FDEAEA;color:#B02A2A;border:none;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;font-weight:600;}
+  .removeBtn:hover{background:#F9D2D2;}
+  .row-label{font-size:12px;font-weight:700;color:var(--blue);background:var(--blue-light);display:inline-block;padding:2px 8px;border-radius:5px;margin-bottom:8px;}
+  .kategori-block{border:1px solid var(--gray-line);border-radius:8px;padding:12px 14px 6px;margin-bottom:12px;background:#fff;}
+  .prinsip-check{display:flex;gap:16px;flex-wrap:wrap;background:var(--blue-light);padding:8px 12px;border-radius:7px;margin-bottom:10px;}
+  .prinsip-check label{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--blue);margin-bottom:0;}
+  .prinsip-check input{width:15px;height:15px;margin:0;}
+  .aktivitas-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;background:#FAFBFD;border:1px solid var(--gray-line);border-radius:8px;padding:10px;}
+  .aktivitas-radio{display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:96px;padding-top:6px;}
+  .aktivitas-radio label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:0;cursor:pointer;}
+  .aktivitas-radio input{margin:0;}
+  .aktivitas-row textarea{margin-bottom:0;flex:1;min-height:54px;}
+  .aktivitas-row .removeBtn{flex-shrink:0;align-self:flex-start;margin-top:4px;}
+  .smallBtn{background:var(--blue-light);color:var(--blue);border:1px dashed var(--blue);border-radius:7px;padding:7px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:2px;margin-bottom:10px;}
+  .smallBtn:hover{background:#DCE6F8;}
+  .addPertemuanBtn{width:100%;padding:12px;border-radius:10px;border:2px dashed var(--blue);background:#fff;color:var(--blue);font-weight:700;font-size:14px;cursor:pointer;}
+  .addPertemuanBtn:hover{background:var(--blue-light);}
+  .radio-inline{display:flex;gap:18px;flex-wrap:wrap;background:var(--blue-light);padding:10px 14px;border-radius:8px;margin-bottom:10px;}
+  .radio-inline label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:0;cursor:pointer;}
+  .radio-inline input{margin:0;}
+  .asesmen-group{border:1.5px solid #C9D4E8;border-radius:9px;padding:14px 14px 6px;margin-bottom:12px;background:#F9FBFF;position:relative;}
+  .asesmen-group .ag-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .asesmen-group .ag-title span{font-weight:700;color:var(--blue);font-size:13px;}
+  .actions{position:sticky;bottom:16px;display:flex;gap:10px;justify-content:center;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);padding:14px;border-radius:14px;box-shadow:0 6px 22px rgba(0,29,98,.18);border:1px solid var(--gray-line);margin-top:20px;}
+  .btn{border:none;border-radius:9px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{background:#0A2C7A;}
+  .btn-ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue);}
+  .btn-ghost:hover{background:var(--blue-light);}
+  .btn-example{background:var(--yellow);color:#412402;}
+  .btn-example:hover{background:#E39602;}
+  .toast{position:fixed;top:18px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;padding:10px 20px;border-radius:8px;font-size:13.5px;box-shadow:0 6px 18px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .25s ease, top .25s ease;z-index:999;}
+  .toast.show{opacity:1;top:26px;}
+  @media (max-width:600px){
+    .grid2{grid-template-columns:1fr;}
+    .profil-grid{grid-template-columns:1fr;}
+    .aktivitas-row{flex-direction:column;}
+    .aktivitas-radio{flex-direction:row;width:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Dokumen Perencanaan Pembelajaran</h1>
+    <p>Program Pendidikan Jarak Jauh (PJJ) Jenjang Pendidikan Menengah</p>
+    <div class="bar"></div>
+  </header>
+
+  <div class="card">
+    <div class="note">Isi formulir di bawah, lalu tekan <strong>“Unduh sebagai Word (.docx)”</strong> di bagian bawah halaman.</div>
+    <h2>Identitas RPP</h2>
+    <div class="grid2">
+      <div><label>Sekolah Induk</label><input type="text" id="sekolah" placeholder="Contoh: SMAN 1 Ambon"></div>
+      <div><label>Fase / Kelas</label>
+        <select id="fase">
+          <option value="">— Pilih Fase/Kelas —</option>
+          <option value="Fase E / Kelas X">Fase E / Kelas X</option>
+          <option value="Fase F / Kelas XI">Fase F / Kelas XI</option>
+          <option value="Fase F / Kelas XII">Fase F / Kelas XII</option>
+        </select>
+      </div>
+      <div><label>Mata Pelajaran</label><input type="text" id="mapel" list="mapelList" placeholder="Pilih atau ketik nama mata pelajaran"></div>
+      <div><label>Topik/Lingkup Materi</label><input type="text" id="topik" placeholder="Contoh: Kemagnetan dan Kelistrikan"></div>
+      <div><label>Alokasi Waktu</label><input type="text" id="alokasi" placeholder="Contoh: 3 x 2 JP"></div>
+      <div><label>Moda</label>
+        <select id="moda">
+          <option value="Blended (Sinkron + Asinkron)">Blended (Sinkron + Asinkron)</option>
+          <option value="Sinkron">Sinkron</option>
+          <option value="Asinkron">Asinkron</option>
+        </select>
+      </div>
+      <div><label>Guru Sekolah Induk</label><input type="text" id="mt" placeholder="Contoh: Sisilia Kalkoy, S.Pd"></div>
+      <div><label>Guru Sekolah Mitra</label><input type="text" id="gurulokal" placeholder="Nama Guru Sekolah Mitra pendamping"></div>
+    </div>
+    <datalist id="mapelList">
+      <option value="Pendidikan Agama dan Budi Pekerti">
+      <option value="Pendidikan Pancasila">
+      <option value="Bahasa Indonesia">
+      <option value="Matematika">
+      <option value="Bahasa Inggris">
+      <option value="Pendidikan Jasmani, Olahraga, dan Kesehatan">
+      <option value="Sejarah">
+      <option value="Seni Budaya">
+      <option value="Muatan Lokal">
+      <option value="Fisika">
+      <option value="Kimia">
+      <option value="Biologi">
+      <option value="Sosiologi">
+      <option value="Ekonomi">
+      <option value="Geografi">
+      <option value="Antropologi">
+      <option value="Bahasa Arab">
+      <option value="Bahasa Mandarin">
+      <option value="Bahasa Jepang">
+      <option value="Bahasa Korea">
+      <option value="Bahasa Jerman">
+      <option value="Bahasa Prancis">
+      <option value="Informatika">
+      <option value="Prakarya dan Kewirausahaan">
+    </datalist>
+  </div>
+
+  <div class="card">
+    <h2>A. Identifikasi — Dimensi Profil Lulusan</h2>
+    <div class="profil-grid">
+      <label class="profil-item"><input type="checkbox" class="profil" value="Keimanan dan Ketakwaan terhadap Tuhan YME"> Keimanan dan Ketakwaan terhadap Tuhan YME</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Kolaborasi"> Kolaborasi</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Kewargaan"> Kewargaan</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Kemandirian"> Kemandirian</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Penalaran Kritis"> Penalaran Kritis</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Kesehatan"> Kesehatan</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Kreativitas"> Kreativitas</label>
+      <label class="profil-item"><input type="checkbox" class="profil" value="Komunikasi"> Komunikasi</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>B. Desain Pembelajaran</h2>
+    <label>1. Tujuan Pembelajaran</label><textarea id="b1" rows="2"></textarea>
+    <label>2. Praktik Pedagogis</label><textarea id="b2" rows="2"></textarea>
+    <label>3. Lingkungan Belajar</label><textarea id="b3" rows="2"></textarea>
+    <label>4. Kemitraan Pembelajaran</label><textarea id="b4" rows="2"></textarea>
+    <label>5. Pemanfaatan Digital</label><textarea id="b5" rows="2"></textarea>
+    <label>6. Lintas Disiplin Ilmu</label><textarea id="b6" rows="2"></textarea>
+    <label>7. Moda dan Skema Sinkron-Asinkron</label><textarea id="b7" rows="2"></textarea>
+    <label>8. Rencana Cadangan / Kendala Teknis</label><textarea id="b8" rows="2"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>C. Pengalaman Belajar</h2>
+    <div class="note">Untuk setiap kategori, centang Prinsip Pembelajaran yang sesuai, lalu tambahkan baris aktivitas. Untuk Asesmen, tambahkan sekelompok (Jenis + Kriteria + Tindak Lanjut) sebanyak yang dibutuhkan &mdash; misalnya satu kelompok Awal dan satu kelompok Formatif dalam pertemuan yang sama.</div>
+    <div id="pertemuanContainer"></div>
+    <button type="button" class="addPertemuanBtn" onclick="addPertemuan()">+ Tambah Pertemuan</button>
+  </div>
+
+  <div class="actions">
+    <a href="/perangkat-kurikulum" style="text-decoration:none"><button type="button" class="btn btn-ghost">← Beranda</button></a>
+    <button class="btn btn-example" onclick="loadExample()">Muat Contoh</button>
+    <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
+    <button class="btn btn-primary" onclick="exportDocx()">🖨️ Ekspor Dok (.docx)</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ptCount = 0;
+let aktCount = 0;
+let asesmenCount = 0;
+const KATEGORI = [
+  {key:'memahami', label:'Memahami'},
+  {key:'mengaplikasi', label:'Mengaplikasi'},
+  {key:'merefleksi', label:'Merefleksi'},
+];
+const PRINSIP_OPTIONS = ['Bermakna','Berkesadaran','Menggembirakan'];
+
+function kategoriBlockHTML(pid, kat){
+  const prinsipHTML = PRINSIP_OPTIONS.map(p =>
+    `<label><input type="checkbox" class="prinsip-cb" value="${p}"> ${p}</label>`
+  ).join('');
+  return `
+    <div class="kategori-block" id="pt${pid}_${kat.key}">
+      <span class="row-label">${kat.label}</span>
+      <div class="prinsip-check">${prinsipHTML}</div>
+      <div id="pt${pid}_${kat.key}_aktWrap"></div>
+      <button type="button" class="smallBtn" onclick="addAktivitas(${pid}, '${kat.key}')">+ Tambah Aktivitas</button>
+    </div>`;
+}
+
+function addAktivitas(pid, katKey, moda, teks){
+  aktCount++;
+  const rid = aktCount;
+  const wrap = document.getElementById(`pt${pid}_${katKey}_aktWrap`);
+  const row = document.createElement('div');
+  row.className = 'aktivitas-row';
+  row.id = `akt${rid}`;
+  const radioName = `radio_pt${pid}_${katKey}_${rid}`;
+  row.innerHTML = `
+    <div class="aktivitas-radio">
+      <label><input type="radio" name="${radioName}" value="Sinkron" ${moda!=='Asinkron'?'checked':''}> Sinkron</label>
+      <label><input type="radio" name="${radioName}" value="Asinkron" ${moda==='Asinkron'?'checked':''}> Asinkron</label>
+    </div>
+    <textarea placeholder="Uraikan aktivitas pembelajaran...">${teks?esc2(teks):''}</textarea>
+    <button type="button" class="removeBtn" onclick="document.getElementById('akt${rid}').remove()">Hapus</button>
+  `;
+  wrap.appendChild(row);
+}
+function esc2(s){ const d=document.createElement('div'); d.innerText=s; return d.innerHTML; }
+
+function addAsesmenGroup(pid, data){
+  asesmenCount++;
+  const aid = asesmenCount;
+  const wrap = document.getElementById(`pt${pid}_asesmenWrap`);
+  const div = document.createElement('div');
+  div.className = 'asesmen-group';
+  div.id = `ag${aid}`;
+  const jenis = (data && data.jenis) || 'Awal';
+  div.innerHTML = `
+    <div class="ag-title">
+      <span>Asesmen</span>
+      <button type="button" class="removeBtn" onclick="document.getElementById('ag${aid}').remove()">Hapus</button>
+    </div>
+    <label>Jenis Asesmen</label>
+    <div class="radio-inline">
+      <label><input type="radio" name="jenisAsesmen_${aid}" value="Awal" ${jenis==='Awal'?'checked':''}> Awal</label>
+      <label><input type="radio" name="jenisAsesmen_${aid}" value="Formatif" ${jenis==='Formatif'?'checked':''}> Formatif</label>
+      <label><input type="radio" name="jenisAsesmen_${aid}" value="Sumatif" ${jenis==='Sumatif'?'checked':''}> Sumatif</label>
+    </div>
+    <label>Kriteria</label>
+    <textarea class="ag-kriteria" rows="3" placeholder="Uraikan kriteria asesmen...">${data&&data.kriteria?esc2(data.kriteria):''}</textarea>
+    <label>Tindak Lanjut</label>
+    <textarea class="ag-tindaklanjut" rows="2">${data&&data.tindaklanjut?esc2(data.tindaklanjut):''}</textarea>
+  `;
+  wrap.appendChild(div);
+}
+
+function addPertemuan(prefill){
+  ptCount++;
+  const pid = ptCount;
+  const div = document.createElement('div');
+  div.className = 'pertemuan-block';
+  div.id = 'pt' + pid;
+  div.innerHTML = `
+    <div class="pt-title">
+      <span>Pertemuan ${pid}</span>
+      <button type="button" class="removeBtn" onclick="removePertemuan(${pid})">Hapus Pertemuan</button>
+    </div>
+    <label>Judul Pertemuan</label>
+    <input type="text" id="pt${pid}_judul" placeholder="Contoh: Mengidentifikasi Pola Garis Gaya Magnet">
+
+    <h3 style="margin-top:14px;">Pengalaman Belajar</h3>
+    ${KATEGORI.map(k=>kategoriBlockHTML(pid,k)).join('')}
+
+    <h3>Asesmen</h3>
+    <div id="pt${pid}_asesmenWrap"></div>
+    <button type="button" class="smallBtn" onclick="addAsesmenGroup(${pid})">+ Tambah Asesmen</button>
+
+    <h3>Refleksi</h3>
+    <label>Pertanyaan Refleksi</label>
+    <textarea id="pt${pid}_refleksi" rows="2" placeholder="Contoh: Apa yang paling kamu pahami hari ini?"></textarea>
+  `;
+  document.getElementById('pertemuanContainer').appendChild(div);
+
+  if(prefill){
+    document.getElementById(`pt${pid}_judul`).value = prefill.judul || '';
+    KATEGORI.forEach(k=>{
+      const kd = prefill[k.key];
+      if(!kd) return;
+      (kd.prinsip||[]).forEach(pr=>{
+        document.querySelector(`#pt${pid}_${k.key} .prinsip-cb[value="${pr}"]`).checked = true;
+      });
+      (kd.aktivitas||[]).forEach(a=> addAktivitas(pid, k.key, a.moda, a.teks));
+    });
+    (prefill.asesmenGroups||[]).forEach(g => addAsesmenGroup(pid, g));
+    document.getElementById(`pt${pid}_refleksi`).value = prefill.refleksi || '';
+  } else {
+    addAsesmenGroup(pid);
+  }
+}
+
+function removePertemuan(pid){
+  const el = document.getElementById('pt' + pid);
+  if(el) el.remove();
+}
+
+function resetForm(){
+  ['sekolah','fase','mapel','topik','alokasi','mt','gurulokal','b1','b2','b3','b4','b5','b6','b7','b8'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('moda').selectedIndex = 0;
+  document.querySelectorAll('.profil').forEach(cb=>cb.checked=false);
+  document.getElementById('pertemuanContainer').innerHTML = '';
+  ptCount = 0;
+  addPertemuan();
+  showToast('Formulir dikosongkan kembali.');
+}
+
+function loadExample(){
+  document.getElementById('sekolah').value = 'SMAN 1 Ambon';
+  document.getElementById('fase').value = 'Fase E / Kelas X';
+  document.getElementById('mapel').value = 'Fisika';
+  document.getElementById('topik').value = 'Kemagnetan dan Kelistrikan';
+  document.getElementById('alokasi').value = '1 x 2 JP (dari rangkaian 3 x 2 JP)';
+  document.getElementById('moda').value = 'Blended (Sinkron + Asinkron)';
+  document.getElementById('mt').value = 'Sisilia Kalkoy, S.Pd';
+  document.getElementById('gurulokal').value = 'Guru Sekolah Mitra SMAN 1 Ambon';
+
+  document.getElementById('b1').value = 'Menganalisis konsep kemagnetan dan gaya magnet pada berbagai bahan, sebagai bagian dari Capaian Pembelajaran Fisika Fase E (SK Kepala BKPDM No. 046/H/KR/2025).';
+  document.getElementById('b2').value = 'Discovery Learning — menemukan pola garis gaya magnet melalui prediksi dan eksperimen sederhana.';
+  document.getElementById('b3').value = 'Kegiatan inti berlangsung sinkron via PID dari Studio Masohi; tugas praktik berlangsung asinkron di kelas, didampingi Guru Sekolah Mitra.';
+  document.getElementById('b4').value = 'Guru Sekolah Induk (substansi dan penyampaian konsep) bermitra dengan Guru Sekolah Mitra (pengelolaan kelas dan umpan balik langsung).';
+  document.getElementById('b5').value = 'Papan Interaktif Digital (PID), koneksi Starlink, aplikasi pesan (WAG) untuk pengumpulan tugas.';
+  document.getElementById('b6').value = 'Tidak diterapkan pada contoh ini.';
+  document.getElementById('b7').value = 'Satu sesi sinkron (±30–40 menit) untuk pengantar dan demonstrasi, dilanjutkan sesi asinkron untuk praktik dan refleksi.';
+  document.getElementById('b8').value = 'Jika listrik/PID tidak berfungsi: Guru Sekolah Mitra melanjutkan demonstrasi manual menggunakan magnet batang dan serbuk besi.';
+
+  document.querySelectorAll('.profil').forEach(cb=>{
+    cb.checked = ['Penalaran Kritis','Kreativitas','Kemandirian','Komunikasi'].includes(cb.value);
+  });
+
+  document.getElementById('pertemuanContainer').innerHTML = '';
+  ptCount = 0;
+  addPertemuan({
+    judul: 'Menganalisis Pola Garis Gaya Magnet pada Berbagai Bahan',
+    memahami: {
+      prinsip: ['Bermakna','Berkesadaran'],
+      aktivitas: [
+        {moda:'Sinkron', teks:'Guru Sekolah Induk membuka sesi, menyapa siswa, dan mengajukan Pertanyaan Pemantik: "Mengapa dua kutub magnet yang sama sulit didekatkan?"'},
+        {moda:'Sinkron', teks:'Demonstrasi pola garis gaya via kamera dokumen ke PID; siswa memprediksi sebelum hasil ditunjukkan.'},
+        {moda:'Asinkron', teks:'Guru Sekolah Mitra memandu siswa mengamati ulang pola garis gaya menggunakan magnet batang dan serbuk besi.'},
+      ]
+    },
+    mengaplikasi: {
+      prinsip: ['Bermakna','Menggembirakan'],
+      aktivitas: [
+        {moda:'Asinkron', teks:'Siswa menyusun klaim-bukti-alasan (CER) tentang pola garis gaya magnet pada Lembar Kerja, didampingi Guru Sekolah Mitra.'},
+      ]
+    },
+    merefleksi: {
+      prinsip: ['Bermakna','Berkesadaran'],
+      aktivitas: [
+        {moda:'Asinkron', teks:'2-3 siswa menyampaikan satu hal yang paling dipahami dan satu hal yang masih membingungkan.'},
+      ]
+    },
+    asesmenGroups: [
+      {jenis:'Formatif', kriteria:'1. Mampu menjelaskan pola garis gaya pada satu magnet\n2. Mampu memprediksi pola sebelum ditunjukkan\n3. Mampu menyusun klaim-bukti-alasan (CER) dengan tepat', tindaklanjut:'Jika sebagian besar siswa mampu menjawab dengan baik, lanjut ke pertemuan berikutnya. Jika belum, Guru Sekolah Mitra mengulang demonstrasi manual.'},
+    ],
+    refleksi: 'Apa yang paling kamu pahami hari ini? Apa yang masih membingungkan? Bagaimana magnet dipakai dalam kehidupan sehari-hari di sekitar kita?',
+  });
+
+  showToast('Contoh berhasil dimuat.');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ===================== DOCX (OOXML) GENERATION (Enhanced Standard) ===================== */
+
+function xmlEsc(s){ 
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); 
+}
+
+function xRun(text, opts){
+  opts = opts || {};
+  let rpr = '<w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>';
+  if(opts.bold) rpr += '<w:b/>';
+  if(opts.color) rpr += `<w:color w:val="${opts.color}"/>`;
+  rpr += `<w:sz w:val="${opts.size||22}"/><w:szCs w:val="${opts.size||22}"/></w:rPr>`;
+  return `<w:r>${rpr}<w:t xml:space="preserve">${xmlEsc(text)}</w:t></w:r>`;
+}
+
+function xPara(content, opts){
+  opts = opts || {};
+  let pprInner = `<w:spacing w:before="${opts.before||0}" w:after="${opts.after!==undefined?opts.after:140}" w:line="300" w:lineRule="auto"/>`;
+  if(opts.borderBottom) pprInner += `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="F9A703"/></w:pBdr>`;
+  if(opts.align) pprInner += `<w:jc w:val="${opts.align}"/>`;
+  const ppr = `<w:pPr>${pprInner}</w:pPr>`;
+  let runs;
+  if(Array.isArray(content)) runs = content.map(r => typeof r==='string' ? xRun(r,opts) : xRun(r.text, r)).join('');
+  else runs = xRun(content, opts);
+  return `<w:p>${ppr}${runs}</w:p>`;
+}
+
+function xMultiPara(text, opts){
+  opts = opts || {};
+  const lines = String(text||'').split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  if(lines.length===0) return xPara('', opts);
+  return lines.map(l=>xPara(l, opts)).join('');
+}
+
+function xCell(innerXml, opts){
+  opts = opts || {};
+  let tcPr = `<w:tcW w:w="${opts.width || 2000}" w:type="dxa"/>`;
+  if(opts.gridSpan) tcPr += `<w:gridSpan w:val="${opts.gridSpan}"/>`;
+  if(opts.fill) tcPr += `<w:shd w:val="clear" w:color="auto" w:fill="${opts.fill}"/>`;
+  tcPr += '<w:vAlign w:val="center"/>';
+
+  let finalContent = innerXml;
+  if (!innerXml.includes('<w:p')) {
+    const alignXml = opts.align ? `<w:jc w:val="${opts.align}"/>` : '';
+    const boldXml = opts.bold ? '<w:b/>' : '';
+    const colorXml = opts.color ? `<w:color w:val="${opts.color}"/>` : '';
+    finalContent = `
+      <w:p>
+        <w:pPr>
+          ${alignXml}
+          <w:spacing w:after="0"/>
+        </w:pPr>
+        <w:r>
+          <w:rPr>${boldXml}${colorXml}<w:sz w:val="20"/></w:rPr>
+          <w:t xml:space="preserve">${innerXml}</w:t>
+        </w:r>
+      </w:p>`;
+  }
+  return `<w:tc><w:tcPr>${tcPr}</w:tcPr>${finalContent}</w:tc>`;
+}
+
+function headerCell(text, width, opts){
+  opts = opts || {};
+  return xCell(xPara(text, Object.assign({bold:true, color:'FFFFFF', size:21, after:0}, opts)), {width, fill:'001D62'});
+}
+
+function bodyCell(xmlContent, width){
+  return xCell(xmlContent, {width});
+}
+
+function bodyCellText(text, width, opts){
+  opts = opts || {};
+  return xCell(xPara(text, Object.assign({size:20, after:0}, opts)), Object.assign({width}, opts));
+}
+
+function xRow(cellsXml, isHeader = false){
+  const headerProp = isHeader ? '<w:tblHeader/>' : '';
+  return `<w:tr><w:trPr>${headerProp}<w:cantSplit/></w:trPr>${cellsXml}</w:tr>`;
+}
+
+function xTable(rowsXml, colWidths){
+  colWidths = colWidths || [2700, 6326];
+  const totalWidth = colWidths.reduce((a,b)=>a+b,0);
+  const gridXml = '<w:tblGrid>' + colWidths.map(w=>`<w:gridCol w:w="${w}"/>`).join('') + '</w:tblGrid>';
+  return `<w:tbl><w:tblPr><w:tblW w:w="${totalWidth}" w:type="dxa"/><w:tblBorders>
+    <w:top w:val="single" w:sz="4" w:color="999999"/><w:left w:val="single" w:sz="4" w:color="999999"/>
+    <w:bottom w:val="single" w:sz="4" w:color="999999"/><w:right w:val="single" w:sz="4" w:color="999999"/>
+    <w:insideH w:val="single" w:sz="4" w:color="999999"/><w:insideV w:val="single" w:sz="4" w:color="999999"/>
+    </w:tblBorders>
+    <w:tblCellMar>
+      <w:top w:w="80" w:type="dxa"/>
+      <w:left w:w="120" w:type="dxa"/>
+      <w:bottom w:w="80" w:type="dxa"/>
+      <w:right w:w="120" w:type="dxa"/>
+    </w:tblCellMar>
+    <w:tblLayout w:type="fixed"/></w:tblPr>${gridXml}${rowsXml}</w:tbl>`;
+}
+
+function buildKategoriRowsXml(pid, kat){
+  const prinsipChecked = Array.from(document.querySelectorAll(`#pt${pid}_${kat.key} .prinsip-cb:checked`)).map(cb=>cb.value);
+  const prinsipText = prinsipChecked.length ? prinsipChecked.join(', ') : '\u2014';
+  const rows = Array.from(document.querySelectorAll(`#pt${pid}_${kat.key}_aktWrap .aktivitas-row`));
+
+  const leftXml = xPara([{text:'Pengalaman Belajar: ',bold:true,size:20},{text:kat.label,size:20}],{after:60})
+    + xPara([{text:'Prinsip Pembelajaran: ',bold:true,size:20},{text:prinsipText,size:20}],{after:0});
+
+  let rightXml;
+  if(rows.length===0){
+    rightXml = xPara('', {size:20});
+  } else {
+    rightXml = rows.map((row,idx)=>{
+      const modaVal = row.querySelector('input[type=radio]:checked') ? row.querySelector('input[type=radio]:checked').value : 'Sinkron';
+      const teks = row.querySelector('textarea').value;
+      const checkSinkron = modaVal === 'Sinkron' ? '\u2611' : '\u2610';
+      const checkAsinkron = modaVal === 'Asinkron' ? '\u2611' : '\u2610';
+      const checklistPara = xPara([
+        {text:`${idx+1}. `, bold:true, size:19},
+        {text:`${checkSinkron} Sinkron    `, size:19},
+        {text:`${checkAsinkron} Asinkron`, size:19},
+      ], {after:40});
+      const textPara = xMultiPara(teks, {size:20, after:100});
+      return checklistPara + textPara;
+    }).join('');
+  }
+  return xRow(bodyCell(leftXml, 2350) + bodyCell(rightXml, 6676));
+}
+
+function buildAsesmenXml(pid){
+  const groups = Array.from(document.querySelectorAll(`#pt${pid}_asesmenWrap .asesmen-group`));
+  if(groups.length===0) return xPara('\u2014',{size:20});
+  return groups.map((g,i)=>{
+    const jenisEl = g.querySelector('input[type=radio]:checked');
+    const jenis = jenisEl ? jenisEl.value : '';
+    const kriteria = g.querySelector('.ag-kriteria').value;
+    const tindaklanjut = g.querySelector('.ag-tindaklanjut').value;
+    return xPara([{text:`Asesmen ${i+1} \u2014 Jenis: `,bold:true,size:21,color:'001D62'},{text:jenis,size:21}],{before:120,after:60})
+      + xPara([{text:'Kriteria: ',bold:true,size:20}],{after:20})
+      + xMultiPara(kriteria,{size:20,after:60})
+      + xPara([{text:'Tindak Lanjut: ',bold:true,size:20},{text:tindaklanjut,size:20}],{after:100});
+  }).join('');
+}
+
+function buildPertemuanXml(block){
+  const pid = block.id.replace('pt','');
+  const judul = document.getElementById(`pt${pid}_judul`).value || '(Judul belum diisi)';
+  const refleksi = document.getElementById(`pt${pid}_refleksi`).value;
+
+  const heading = xPara(`Pertemuan ${pid}: ${judul}`, {bold:true,color:'001D62',size:26,before:200,after:120});
+
+  const tableHeader = xRow(headerCell('Pengalaman dan Prinsip Belajar',2350,{align:'center'}) + headerCell('Aktivitas Pembelajaran',6676,{align:'center'}), true);
+  const kategoriRows = KATEGORI.map(k => buildKategoriRowsXml(pid,k)).join('');
+  const pengalamanTable = xTable(tableHeader + kategoriRows, [2350, 6676]);
+
+  const asesmenHeading = xPara('Asesmen', {bold:true,color:'001D62',size:24,before:200,after:80});
+  const asesmenXml = buildAsesmenXml(pid);
+
+  const refleksiHeading = xPara('Refleksi', {bold:true,color:'001D62',size:24,before:200,after:80});
+  const refleksiXml = xMultiPara(refleksi, {size:20,after:160});
+
+  return heading + pengalamanTable + asesmenHeading + asesmenXml + refleksiHeading + refleksiXml;
+}
+
+function buildProfilTableXml(){
+  const profilChecked = Array.from(document.querySelectorAll('.profil')).map(cb=>({v:cb.value, checked:cb.checked}));
+  const kiri = profilChecked.slice(0,4);
+  const kanan = profilChecked.slice(4,8);
+  const rows = kiri.map((k,i)=>{
+    const r = kanan[i];
+    const c1 = k.checked ? '\u2611' : '\u2610';
+    const c2 = r.checked ? '\u2611' : '\u2610';
+    return xRow(
+      bodyCell(xPara(c1,{size:20,after:0,align:'center'}), 500) +
+      bodyCell(xPara(k.v,{size:20,after:0}), 3963) +
+      bodyCell(xPara(c2,{size:20,after:0,align:'center'}), 500) +
+      bodyCell(xPara(r.v,{size:20,after:0}), 3963)
+    );
+  }).join('');
+  return xTable(rows, [500, 3963, 500, 3963]);
+}
+
+function buildIdentityTableXml(){
+  const fields = [
+    ['Sekolah Induk','sekolah'],['Fase/Kelas','fase'],['Mata Pelajaran','mapel'],['Topik/Lingkup Materi','topik'],
+    ['Alokasi Waktu','alokasi'],['Moda','moda'],['Guru Sekolah Induk','mt'],['Guru Sekolah Mitra','gurulokal'],
+  ];
+  const rows = fields.map(([label,id])=>{
+    const val = document.getElementById(id).value || '\u2014';
+    return xRow(headerCell(label,2700) + bodyCell(xPara(val,{size:20,after:0}), 6326));
+  }).join('');
+  return xTable(rows, [2700, 6326]);
+}
+
+function buildBSectionXml(){
+  const bFields = [
+    ['1. Tujuan Pembelajaran','b1'],['2. Praktik Pedagogis','b2'],['3. Lingkungan Belajar','b3'],
+    ['4. Kemitraan Pembelajaran','b4'],['5. Pemanfaatan Digital','b5'],['6. Lintas Disiplin Ilmu','b6'],
+    ['7. Moda dan Skema Sinkron-Asinkron (Tambahan Khusus PJJ)','b7'],['8. Rencana Cadangan / Kendala Teknis (Tambahan Khusus PJJ)','b8'],
+  ];
+  return bFields.map(([label,id])=>{
+    const val = document.getElementById(id).value || '\u2014';
+    return xPara(label,{bold:true,color:'001D62',size:23,before:160,after:60}) + xMultiPara(val,{size:20,after:80});
+  }).join('');
+}
+
+async function exportDocx(){
+  if(typeof JSZip === 'undefined'){
+    showToast('Gagal memuat pustaka JSZip. Periksa koneksi internet.');
+    return;
+  }
+  const title = xPara('Dokumen Perencanaan Pembelajaran', {bold:true,color:'001D62',size:36,after:40,borderBottom:true});
+  const subtitle = xPara('Program Pendidikan Jarak Jauh (PJJ) Jenjang Pendidikan Menengah', {color:'555555',size:24,after:200});
+
+  const hA = xPara('A. Identifikasi', {bold:true,color:'001D62',size:26,before:200,after:100,borderBottom:true});
+  const pA = xPara('Dimensi profil lulusan yang dicapai dalam pembelajaran ini sebagai berikut.', {size:20,after:100});
+  const tblProfil = buildProfilTableXml();
+
+  const hB = xPara('B. Kegiatan Pembelajaran', {bold:true,color:'001D62',size:26,before:200,after:100,borderBottom:true});
+  const bSection = buildBSectionXml();
+
+  const hC = xPara('C. Pengalaman Belajar', {bold:true,color:'001D62',size:26,before:200,after:100,borderBottom:true});
+  const pertemuanBlocks = Array.from(document.querySelectorAll('.pertemuan-block')).map(buildPertemuanXml).join('');
+
+  const identityTable = buildIdentityTableXml();
+
+  const sectPr = `<w:sectPr><w:headerReference w:type="default" r:id="rIdHdr"/><w:footerReference w:type="default" r:id="rIdFtr"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`;
+
+  const bodyXml = title + subtitle + identityTable + xPara('',{after:100})
+    + hA + pA + tblProfil + xPara('',{after:100})
+    + hB + bSection
+    + hC + pertemuanBlocks
+    + sectPr;
+
+  const HEADER_TEXT = 'Dokumen Perencanaan Pembelajaran \u2014 Pendidikan Jarak Jauh (PJJ) Jenjang SMA';
+
+  const XML_DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
+  const headerXml = `${XML_DECL}
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="8" w:space="4" w:color="F9A703"/></w:pBdr></w:pPr>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:i/><w:iCs/><w:color w:val="001D62"/><w:sz w:val="16"/><w:szCs w:val="16"/></w:rPr><w:t xml:space="preserve">${xmlEsc(HEADER_TEXT)}</w:t></w:r>
+</w:p>
+</w:hdr>`;
+
+  const footerXml = `${XML_DECL}
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:p><w:pPr><w:jc w:val="center"/></w:pPr>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t xml:space="preserve">Halaman </w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t>1</w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t xml:space="preserve"> dari </w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="begin"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:instrText xml:space="preserve"> NUMPAGES </w:instrText></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="separate"/></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:t>1</w:t></w:r>
+<w:r><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:color w:val="001D62"/><w:sz w:val="18"/><w:szCs w:val="18"/></w:rPr><w:fldChar w:fldCharType="end"/></w:r>
+</w:p>
+</w:ftr>`;
+
+  const documentXml = `${XML_DECL}
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:body>${bodyXml}</w:body>
+</w:document>`;
+
+  const contentTypesXml = `${XML_DECL}
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+<Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
+<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
+</Types>`;
+
+  const relsXml = `${XML_DECL}
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const docRelsXml = `${XML_DECL}
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+<Relationship Id="rIdHdr" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/header" Target="header1.xml"/>
+<Relationship Id="rIdFtr" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>
+</Relationships>`;
+
+  const stylesXml = `${XML_DECL}
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/></w:rPr></w:rPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+</w:styles>`;
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', contentTypesXml);
+  zip.folder('_rels').file('.rels', relsXml);
+  const wordFolder = zip.folder('word');
+  wordFolder.file('document.xml', documentXml);
+  wordFolder.file('styles.xml', stylesXml);
+  wordFolder.file('header1.xml', headerXml);
+  wordFolder.file('footer1.xml', footerXml);
+  wordFolder.folder('_rels').file('document.xml.rels', docRelsXml);
+
+  try{
+    const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const sekolah = document.getElementById('sekolah').value;
+    const namaFile = (sekolah ? sekolah.replace(/[^a-z0-9]+/gi,'_') : 'RPP_PJJ');
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `RPP_PJJ_${namaFile}.docx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('File Word (.docx) berhasil diunduh.');
+  } catch(err){
+    console.error(err);
+    showToast('Terjadi kesalahan saat membuat file .docx.');
+  }
+}
+
+// init
+addPertemuan();
+</script>
+</body>
+</html>
