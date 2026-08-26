@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Dokumen Perencanaan Pembelajaran — PJJ SMA</title>
+<title>Dokumen Perencanaan Pembelajaran — PJJ Jenjang SMP</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
@@ -76,7 +76,7 @@
 <div class="wrap">
   <header class="top">
     <h1>Dokumen Perencanaan Pembelajaran</h1>
-    <p>Program Pendidikan Jarak Jauh (PJJ) Jenjang Pendidikan Menengah</p>
+    <p>Pendidikan Jarak Jauh (PJJ) &mdash; Model Implementasi PJJ Jenjang SMP Wilayah Maluku Tengah</p>
     <div class="bar"></div>
   </header>
 
@@ -84,13 +84,13 @@
     <div class="note">Isi formulir di bawah, lalu tekan <strong>“Unduh sebagai Word (.docx)”</strong> di bagian bawah halaman.</div>
     <h2>Identitas RPP</h2>
     <div class="grid2">
-      <div><label>Sekolah Induk</label><input type="text" id="sekolah" placeholder="Contoh: SMAN 1 Ambon"></div>
+      <div><label>Sekolah Induk</label><input type="text" id="sekolah" placeholder="Contoh: SMPN 126 Maluku Tengah"></div>
       <div><label>Fase / Kelas</label>
         <select id="fase">
           <option value="">— Pilih Fase/Kelas —</option>
-          <option value="Fase E / Kelas X">Fase E / Kelas X</option>
-          <option value="Fase F / Kelas XI">Fase F / Kelas XI</option>
-          <option value="Fase F / Kelas XII">Fase F / Kelas XII</option>
+          <option value="Fase D / Kelas VII">Fase D / Kelas VII</option>
+          <option value="Fase D / Kelas VIII">Fase D / Kelas VIII</option>
+          <option value="Fase D / Kelas IX">Fase D / Kelas IX</option>
         </select>
       </div>
       <div><label>Mata Pelajaran</label><input type="text" id="mapel" list="mapelList" placeholder="Pilih atau ketik nama mata pelajaran"></div>
@@ -310,14 +310,14 @@ function resetForm(){
 }
 
 function loadExample(){
-  document.getElementById('sekolah').value = 'SMAN 1 Ambon';
-  document.getElementById('fase').value = 'Fase E / Kelas X';
-  document.getElementById('mapel').value = 'Fisika';
+  document.getElementById('sekolah').value = 'SMPN 126 Maluku Tengah';
+  document.getElementById('fase').value = 'Fase D / Kelas IX';
+  document.getElementById('mapel').value = 'IPA';
   document.getElementById('topik').value = 'Kemagnetan dan Kelistrikan';
   document.getElementById('alokasi').value = '1 x 2 JP (dari rangkaian 3 x 2 JP)';
   document.getElementById('moda').value = 'Blended (Sinkron + Asinkron)';
   document.getElementById('mt').value = 'Sisilia Kalkoy, S.Pd';
-  document.getElementById('gurulokal').value = 'Guru Sekolah Mitra SMAN 1 Ambon';
+  document.getElementById('gurulokal').value = 'Kevin, S.Pd';
 
   document.getElementById('b1').value = 'Menganalisis konsep kemagnetan dan gaya magnet pada berbagai bahan, sebagai bagian dari Capaian Pembelajaran Fisika Fase E (SK Kepala BKPDM No. 046/H/KR/2025).';
   document.getElementById('b2').value = 'Discovery Learning — menemukan pola garis gaya magnet melalui prediksi dan eksperimen sederhana.';
@@ -604,7 +604,7 @@ async function exportDocx(){
     + hC + pertemuanBlocks
     + sectPr;
 
-  const HEADER_TEXT = 'Dokumen Perencanaan Pembelajaran \u2014 Pendidikan Jarak Jauh (PJJ) Jenjang SMA';
+  const HEADER_TEXT = 'Dokumen Perencanaan Pembelajaran \u2014 Pendidikan Jarak Jauh (PJJ) Jenjang SMP';
 
   const XML_DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
   const headerXml = `${XML_DECL}
