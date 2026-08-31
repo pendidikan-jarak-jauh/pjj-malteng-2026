@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Dokumen Perencanaan Pembelajaran — PJJ Jenjang SMP</title>
+<title>Dokumen Perencanaan Pembelajaran — PJJ Maluku Tengah</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
@@ -69,6 +69,21 @@
     .aktivitas-row{flex-direction:column;}
     .aktivitas-radio{flex-direction:row;width:auto;}
   }
+
+  /* ===== Tambahan: fitur Simpan/Buka & Panduan (tidak mengubah gaya di atas) ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,15,30,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal-overlay.show{display:flex;}
+  .modal-box{background:#fff;border-radius:12px;max-width:640px;width:100%;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+  .modal-head{background:var(--blue);color:#fff;padding:20px 24px;position:relative;}
+  .modal-head h3{margin:0 0 4px;font-size:18px;}
+  .modal-head p{margin:0;font-size:13px;color:#CBD5E8;}
+  .modal-head .bar{height:4px;background:var(--yellow);border-radius:2px;margin-top:14px;}
+  .modal-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.16);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;line-height:1;}
+  .modal-close:hover{background:rgba(255,255,255,.3);}
+  .modal-body{padding:20px 24px;overflow-y:auto;color:var(--text);}
+  .modal-body ol{margin:0;padding-left:1.2rem;display:grid;gap:12px;}
+  .modal-body li strong{color:var(--blue);}
+  .modal-body .modal-note{background:var(--yellow-soft);color:#6b5000;border-left:4px solid var(--yellow);border-radius:6px;padding:10px 12px;font-size:12.5px;margin-top:16px;}
 </style>
 </head>
 <body>
@@ -76,7 +91,7 @@
 <div class="wrap">
   <header class="top">
     <h1>Dokumen Perencanaan Pembelajaran</h1>
-    <p>Pendidikan Jarak Jauh (PJJ) &mdash; Model Implementasi PJJ Jenjang SMP Wilayah Maluku Tengah</p>
+    <p>Program Pendidikan Jarak Jauh (PJJ) Maluku Tengah Jenjang SMP</p>
     <div class="bar"></div>
   </header>
 
@@ -84,7 +99,7 @@
     <div class="note">Isi formulir di bawah, lalu tekan <strong>“Unduh sebagai Word (.docx)”</strong> di bagian bawah halaman.</div>
     <h2>Identitas RPP</h2>
     <div class="grid2">
-      <div><label>Sekolah Induk</label><input type="text" id="sekolah" placeholder="Contoh: SMPN 126 Maluku Tengah"></div>
+      <div><label>Sekolah Model</label><input type="text" id="sekolah" placeholder="Contoh: SMPN 126 Maluku Tengah"></div>
       <div><label>Fase / Kelas</label>
         <select id="fase">
           <option value="">— Pilih Fase/Kelas —</option>
@@ -103,8 +118,8 @@
           <option value="Asinkron">Asinkron</option>
         </select>
       </div>
-      <div><label>Guru Sekolah Induk</label><input type="text" id="mt" placeholder="Contoh: Sisilia Kalkoy, S.Pd"></div>
-      <div><label>Guru Sekolah Mitra</label><input type="text" id="gurulokal" placeholder="Nama Guru Sekolah Mitra pendamping"></div>
+      <div><label>Master Teacher</label><input type="text" id="mt" placeholder="Contoh: Anita, S.Pd"></div>
+      <div><label>Guru Sekolah Model</label><input type="text" id="gurulokal" placeholder="Contoh: Kevin, S.Pd"></div>
     </div>
     <datalist id="mapelList">
       <option value="Pendidikan Agama dan Budi Pekerti">
@@ -149,7 +164,7 @@
   </div>
 
   <div class="card">
-    <h2>B. Desain Pembelajaran</h2>
+    <h2>B. Kegiatan Pembelajaran</h2>
     <label>1. Tujuan Pembelajaran</label><textarea id="b1" rows="2"></textarea>
     <label>2. Praktik Pedagogis</label><textarea id="b2" rows="2"></textarea>
     <label>3. Lingkungan Belajar</label><textarea id="b3" rows="2"></textarea>
@@ -168,10 +183,35 @@
   </div>
 
   <div class="actions">
-    <a href="/perangkat-kurikulum" style="text-decoration:none"><button type="button" class="btn btn-ghost">← Beranda</button></a>
+    <button class="btn btn-ghost" id="openGuideBtn" type="button">📘 Panduan</button>
+    <button class="btn btn-ghost" id="openFileBtn" type="button">Buka File</button>
+    <button class="btn btn-ghost" id="saveFileBtn" type="button">Simpan sebagai File</button>
     <button class="btn btn-example" onclick="loadExample()">Muat Contoh</button>
     <button class="btn btn-ghost" onclick="resetForm()">Reset</button>
     <button class="btn btn-primary" onclick="exportDocx()">🖨️ Ekspor Dok (.docx)</button>
+  </div>
+  <input type="file" id="stateFileInput" accept="application/json" style="display:none">
+</div>
+
+<div class="modal-overlay" id="guideModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <button type="button" class="modal-close" id="closeGuideBtn">✕</button>
+      <h3>Panduan Singkat Pengisian</h3>
+      <p>Dokumen Perencanaan Pembelajaran — PJJ Maluku Tengah</p>
+      <div class="bar"></div>
+    </div>
+    <div class="modal-body">
+      <ol>
+        <li><strong>Isi Identitas RPP.</strong> Lengkapi sekolah, fase/kelas, mata pelajaran, topik, alokasi waktu, moda, Master Teacher, dan Guru Sekolah Model.</li>
+        <li><strong>Centang Dimensi Profil Lulusan</strong> yang relevan dengan pembelajaran ini.</li>
+        <li><strong>Isi Kegiatan Pembelajaran (B1–B8)</strong> sesuai delapan aspek yang diminta.</li>
+        <li><strong>Tambahkan Pertemuan.</strong> Untuk tiap pertemuan, isi judul, lalu lengkapi Pengalaman Belajar (Memahami/Mengaplikasi/Merefleksi) dengan mencentang Prinsip Pembelajaran dan menambahkan aktivitas sinkron/asinkron, tambahkan Asesmen (Awal/Formatif/Sumatif), dan isi Refleksi.</li>
+        <li><strong>Data tersimpan otomatis</strong> di perangkat ini setiap kali Anda mengubah isian. Gunakan <strong>"Simpan sebagai File"</strong> untuk menyimpan salinan atau memindahkannya ke perangkat lain, dan <strong>"Buka File"</strong> untuk memuatnya kembali.</li>
+        <li><strong>Ekspor Dok (.docx)</strong> untuk mengunduh RPP sebagai dokumen Word siap cetak.</li>
+      </ol>
+      <div class="modal-note">Tombol "Reset" akan mengosongkan seluruh isian termasuk data tersimpan otomatis — gunakan dengan hati-hati.</div>
+    </div>
   </div>
 </div>
 
@@ -219,7 +259,7 @@ function addAktivitas(pid, katKey, moda, teks){
   `;
   wrap.appendChild(row);
 }
-function esc2(s){ const d=document.createElement('div'); d.innerText=s; return d.innerHTML; }
+function esc2(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function addAsesmenGroup(pid, data){
   asesmenCount++;
@@ -310,23 +350,23 @@ function resetForm(){
 }
 
 function loadExample(){
-  document.getElementById('sekolah').value = 'SMPN 126 Maluku Tengah';
+  document.getElementById('sekolah').value = 'SMPN 50 Maluku Tengah';
   document.getElementById('fase').value = 'Fase D / Kelas IX';
   document.getElementById('mapel').value = 'IPA';
   document.getElementById('topik').value = 'Kemagnetan dan Kelistrikan';
   document.getElementById('alokasi').value = '1 x 2 JP (dari rangkaian 3 x 2 JP)';
   document.getElementById('moda').value = 'Blended (Sinkron + Asinkron)';
-  document.getElementById('mt').value = 'Sisilia Kalkoy, S.Pd';
-  document.getElementById('gurulokal').value = 'Kevin, S.Pd';
+  document.getElementById('mt').value = 'Sisilia Kalkoy, S.Pd (SMP Yos Soedarso Masohi)';
+  document.getElementById('gurulokal').value = 'Guru lokal SMPN 50 Maluku Tengah';
 
-  document.getElementById('b1').value = 'Menganalisis konsep kemagnetan dan gaya magnet pada berbagai bahan, sebagai bagian dari Capaian Pembelajaran Fisika Fase E (SK Kepala BKPDM No. 046/H/KR/2025).';
-  document.getElementById('b2').value = 'Discovery Learning — menemukan pola garis gaya magnet melalui prediksi dan eksperimen sederhana.';
-  document.getElementById('b3').value = 'Kegiatan inti berlangsung sinkron via PID dari Studio Masohi; tugas praktik berlangsung asinkron di kelas, didampingi Guru Sekolah Mitra.';
-  document.getElementById('b4').value = 'Guru Sekolah Induk (substansi dan penyampaian konsep) bermitra dengan Guru Sekolah Mitra (pengelolaan kelas dan umpan balik langsung).';
+  document.getElementById('b1').value = 'Menganalisis gejala kemagnetan (pola garis gaya pada berbagai susunan kutub), sebagai bagian dari Capaian Pembelajaran IPA Fase D (SK Kepala BKPDM No. 046/H/KR/2025).';
+  document.getElementById('b2').value = 'Discovery Learning — menemukan pola garis gaya magnet melalui prediksi dan observasi.';
+  document.getElementById('b3').value = 'Kegiatan inti berlangsung sinkron via PID dari Studio Masohi; tugas praktik berlangsung asinkron di kelas, didampingi guru lokal.';
+  document.getElementById('b4').value = 'Master Teacher (substansi dan penyampaian konsep) bermitra dengan guru lokal (pengelolaan kelas dan umpan balik langsung).';
   document.getElementById('b5').value = 'Papan Interaktif Digital (PID), koneksi Starlink, aplikasi pesan (WAG) untuk pengumpulan tugas.';
   document.getElementById('b6').value = 'Tidak diterapkan pada contoh ini.';
   document.getElementById('b7').value = 'Satu sesi sinkron (±30–40 menit) untuk pengantar dan demonstrasi, dilanjutkan sesi asinkron untuk praktik dan refleksi.';
-  document.getElementById('b8').value = 'Jika listrik/PID tidak berfungsi: Guru Sekolah Mitra melanjutkan demonstrasi manual menggunakan magnet batang dan serbuk besi.';
+  document.getElementById('b8').value = 'Jika listrik/PID tidak berfungsi: guru lokal melanjutkan demonstrasi manual menggunakan magnet batang dan serbuk besi.';
 
   document.querySelectorAll('.profil').forEach(cb=>{
     cb.checked = ['Penalaran Kritis','Kreativitas','Kemandirian','Komunikasi'].includes(cb.value);
@@ -335,19 +375,19 @@ function loadExample(){
   document.getElementById('pertemuanContainer').innerHTML = '';
   ptCount = 0;
   addPertemuan({
-    judul: 'Menganalisis Pola Garis Gaya Magnet pada Berbagai Bahan',
+    judul: 'Mengidentifikasi Pola Garis Gaya Magnet',
     memahami: {
       prinsip: ['Bermakna','Berkesadaran'],
       aktivitas: [
-        {moda:'Sinkron', teks:'Guru Sekolah Induk membuka sesi, menyapa siswa, dan mengajukan Pertanyaan Pemantik: "Mengapa dua kutub magnet yang sama sulit didekatkan?"'},
+        {moda:'Sinkron', teks:'Master Teacher membuka sesi, menyapa siswa, dan mengajukan Pertanyaan Pemantik: "Pernahkah kalian melihat dua magnet yang sulit didekatkan?"'},
         {moda:'Sinkron', teks:'Demonstrasi pola garis gaya via kamera dokumen ke PID; siswa memprediksi sebelum hasil ditunjukkan.'},
-        {moda:'Asinkron', teks:'Guru Sekolah Mitra memandu siswa mengamati ulang pola garis gaya menggunakan magnet batang dan serbuk besi.'},
+        {moda:'Asinkron', teks:'Guru lokal memandu siswa mengamati ulang pola garis gaya menggunakan magnet batang dan serbuk besi.'},
       ]
     },
     mengaplikasi: {
       prinsip: ['Bermakna','Menggembirakan'],
       aktivitas: [
-        {moda:'Asinkron', teks:'Siswa menyusun klaim-bukti-alasan (CER) tentang pola garis gaya magnet pada Lembar Kerja, didampingi Guru Sekolah Mitra.'},
+        {moda:'Asinkron', teks:'Siswa menyusun klaim-bukti-alasan (CER) tentang pola garis gaya magnet pada Lembar Kerja, didampingi guru lokal.'},
       ]
     },
     merefleksi: {
@@ -357,7 +397,7 @@ function loadExample(){
       ]
     },
     asesmenGroups: [
-      {jenis:'Formatif', kriteria:'1. Mampu menjelaskan pola garis gaya pada satu magnet\n2. Mampu memprediksi pola sebelum ditunjukkan\n3. Mampu menyusun klaim-bukti-alasan (CER) dengan tepat', tindaklanjut:'Jika sebagian besar siswa mampu menjawab dengan baik, lanjut ke pertemuan berikutnya. Jika belum, Guru Sekolah Mitra mengulang demonstrasi manual.'},
+      {jenis:'Formatif', kriteria:'1. Mampu menjelaskan pola garis gaya pada satu magnet\n2. Mampu memprediksi pola sebelum ditunjukkan\n3. Mampu menyusun klaim-bukti-alasan (CER) dengan tepat', tindaklanjut:'Jika sebagian besar siswa mampu menjawab dengan baik, lanjut ke pertemuan berikutnya. Jika belum, guru lokal mengulang demonstrasi manual.'},
     ],
     refleksi: 'Apa yang paling kamu pahami hari ini? Apa yang masih membingungkan? Bagaimana magnet dipakai dalam kehidupan sehari-hari di sekitar kita?',
   });
@@ -554,8 +594,8 @@ function buildProfilTableXml(){
 
 function buildIdentityTableXml(){
   const fields = [
-    ['Sekolah Induk','sekolah'],['Fase/Kelas','fase'],['Mata Pelajaran','mapel'],['Topik/Lingkup Materi','topik'],
-    ['Alokasi Waktu','alokasi'],['Moda','moda'],['Guru Sekolah Induk','mt'],['Guru Sekolah Mitra','gurulokal'],
+    ['Sekolah Model','sekolah'],['Fase/Kelas','fase'],['Mata Pelajaran','mapel'],['Topik/Lingkup Materi','topik'],
+    ['Alokasi Waktu','alokasi'],['Moda','moda'],['Master Teacher','mt'],['Guru Sekolah Model','gurulokal'],
   ];
   const rows = fields.map(([label,id])=>{
     const val = document.getElementById(id).value || '\u2014';
@@ -582,7 +622,7 @@ async function exportDocx(){
     return;
   }
   const title = xPara('Dokumen Perencanaan Pembelajaran', {bold:true,color:'001D62',size:36,after:40,borderBottom:true});
-  const subtitle = xPara('Program Pendidikan Jarak Jauh (PJJ) Jenjang Pendidikan Menengah', {color:'555555',size:24,after:200});
+  const subtitle = xPara('Program Pendidikan Jarak Jauh (PJJ) Wilayah Maluku Tengah Jenjang SMP', {color:'555555',size:24,after:200});
 
   const hA = xPara('A. Identifikasi', {bold:true,color:'001D62',size:26,before:200,after:100,borderBottom:true});
   const pA = xPara('Dimensi profil lulusan yang dicapai dalam pembelajaran ini sebagai berikut.', {size:20,after:100});
@@ -604,7 +644,7 @@ async function exportDocx(){
     + hC + pertemuanBlocks
     + sectPr;
 
-  const HEADER_TEXT = 'Dokumen Perencanaan Pembelajaran \u2014 Pendidikan Jarak Jauh (PJJ) Jenjang SMP';
+  const HEADER_TEXT = 'Dokumen Perencanaan Pembelajaran \u2014 Implementasi PJJ Maluku Tengah';
 
   const XML_DECL = '<' + '?xml version="1.0" encoding="UTF-8" standalone="yes"?' + '>';
   const headerXml = `${XML_DECL}
@@ -694,6 +734,136 @@ async function exportDocx(){
 
 // init
 addPertemuan();
+
+/* ===================== TAMBAHAN: Simpan & Buka Kembali + Panduan ===================== */
+/* Blok di bawah ini murni tambahan baru — tidak mengubah satu pun kode di atas. */
+
+const AUTOSAVE_KEY = 'rppPjjMalteng_autosave_v1';
+const TOP_FIELD_IDS = ['sekolah','fase','mapel','topik','alokasi','moda','mt','gurulokal','b1','b2','b3','b4','b5','b6','b7','b8'];
+
+function collectPertemuanState(){
+  return [...document.querySelectorAll('#pertemuanContainer .pertemuan-block')].map(block=>{
+    const pid = block.id.replace('pt','');
+    const judul = document.getElementById(`pt${pid}_judul`).value || '';
+    const kategoriState = {};
+    KATEGORI.forEach(k=>{
+      const kb = document.getElementById(`pt${pid}_${k.key}`);
+      const prinsip = [...kb.querySelectorAll('.prinsip-cb')].filter(cb=>cb.checked).map(cb=>cb.value);
+      const aktivitas = [...kb.querySelectorAll('.aktivitas-row')].map(row=>({
+        moda: row.querySelector('input[type=radio]:checked') ? row.querySelector('input[type=radio]:checked').value : 'Sinkron',
+        teks: row.querySelector('textarea').value || ''
+      }));
+      kategoriState[k.key] = {prinsip, aktivitas};
+    });
+    const asesmenGroups = [...block.querySelectorAll('.asesmen-group')].map(ag=>({
+      jenis: ag.querySelector('input[type=radio]:checked') ? ag.querySelector('input[type=radio]:checked').value : 'Awal',
+      kriteria: ag.querySelector('.ag-kriteria').value || '',
+      tindaklanjut: ag.querySelector('.ag-tindaklanjut').value || ''
+    }));
+    const refleksi = document.getElementById(`pt${pid}_refleksi`).value || '';
+    return Object.assign({judul, asesmenGroups, refleksi}, kategoriState);
+  });
+}
+
+function collectState(){
+  const state = {type:'rpp-pjj-state', version:1};
+  TOP_FIELD_IDS.forEach(id=> state[id] = document.getElementById(id).value);
+  state.profil = [...document.querySelectorAll('.profil')].filter(cb=>cb.checked).map(cb=>cb.value);
+  state.pertemuan = collectPertemuanState();
+  return state;
+}
+
+function applyState(state){
+  TOP_FIELD_IDS.forEach(id=>{ if(state[id]!==undefined) document.getElementById(id).value = state[id]; });
+  document.querySelectorAll('.profil').forEach(cb=>{ cb.checked = (state.profil||[]).includes(cb.value); });
+  document.getElementById('pertemuanContainer').innerHTML = '';
+  ptCount = 0;
+  (state.pertemuan||[]).forEach(p=> addPertemuan(p));
+  if(!(state.pertemuan||[]).length) addPertemuan();
+}
+
+let autosaveTimer = null;
+function scheduleAutosave(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>{
+    try{ localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(collectState())); }
+    catch(e){ console.warn('Autosave gagal', e); }
+  }, 600);
+}
+
+function tryRestoreAutosave(){
+  try{
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    if(!raw) return false;
+    const state = JSON.parse(raw);
+    if(state && state.type==='rpp-pjj-state'){ applyState(state); showToast('Data tersimpan sebelumnya dimuat otomatis.'); return true; }
+  }catch(e){ console.warn('Gagal memuat autosave', e); }
+  return false;
+}
+
+function saveToFile(){
+  const state = collectState();
+  const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+  const a = document.createElement('a');
+  a.href = dataUri;
+  const sekolahSlug = (state.sekolah || 'rpp-pjj').replace(/\s+/g,'-').toLowerCase();
+  a.download = `rpp-pjj-${sekolahSlug}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('Data berhasil disimpan sebagai file.');
+}
+
+function openFromFile(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const state = JSON.parse(reader.result);
+      if(!state || state.type!=='rpp-pjj-state'){ showToast('File tidak dikenali sebagai data RPP PJJ.'); return; }
+      applyState(state);
+      scheduleAutosave();
+      showToast('Data berhasil dimuat dari file.');
+    }catch(e){ console.error(e); showToast('Gagal membaca file: format tidak valid.'); }
+  };
+  reader.readAsText(file);
+}
+
+function openGuide(){ document.getElementById('guideModal').classList.add('show'); }
+function closeGuide(){ document.getElementById('guideModal').classList.remove('show'); }
+
+/* Wiring tombol & event baru (tidak mengubah listener/atribut lama) */
+document.getElementById('openGuideBtn').addEventListener('click', openGuide);
+document.getElementById('closeGuideBtn').addEventListener('click', closeGuide);
+document.getElementById('guideModal').addEventListener('click', (e)=>{ if(e.target.id==='guideModal') closeGuide(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeGuide(); });
+
+document.getElementById('saveFileBtn').addEventListener('click', saveToFile);
+document.getElementById('openFileBtn').addEventListener('click', ()=> document.getElementById('stateFileInput').click());
+document.getElementById('stateFileInput').addEventListener('change', (e)=>{ const f=e.target.files[0]; if(f) openFromFile(f); e.target.value=''; });
+
+/* Autosave: field statis */
+TOP_FIELD_IDS.forEach(id=>{
+  const elm = document.getElementById(id);
+  elm.addEventListener('input', scheduleAutosave);
+  elm.addEventListener('change', scheduleAutosave);
+});
+document.querySelectorAll('.profil').forEach(cb=> cb.addEventListener('change', scheduleAutosave));
+
+/* Autosave: konten dinamis (pertemuan/aktivitas/asesmen) lewat event delegation,
+   sehingga tidak perlu mengubah fungsi addPertemuan/addAktivitas/addAsesmenGroup yang sudah ada */
+const pertemuanContainerEl = document.getElementById('pertemuanContainer');
+pertemuanContainerEl.addEventListener('input', scheduleAutosave);
+pertemuanContainerEl.addEventListener('change', scheduleAutosave);
+pertemuanContainerEl.addEventListener('click', (e)=>{ if(e.target.classList.contains('removeBtn')) scheduleAutosave(); });
+document.querySelector('.addPertemuanBtn').addEventListener('click', scheduleAutosave);
+
+/* Klik tombol Reset lama juga membersihkan data tersimpan otomatis (tidak mengubah resetForm() itu sendiri) */
+document.querySelectorAll('.actions .btn.btn-ghost').forEach(btn=>{
+  if(btn.getAttribute('onclick')==='resetForm()'){
+    btn.addEventListener('click', ()=>{ try{ localStorage.removeItem(AUTOSAVE_KEY); }catch(e){} });
+  }
+});
+
+/* Muat ulang data tersimpan saat halaman dibuka (menggantikan addPertemuan() awal bila ada data) */
+tryRestoreAutosave();
 </script>
 </body>
 </html>
